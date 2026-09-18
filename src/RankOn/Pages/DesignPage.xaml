@@ -33,7 +33,7 @@
                     <Slider x:Name="BackgroundOpacitySlider" Minimum="0" Maximum="100" ValueChanged="DesignControl_Changed"/>
                     <TextBlock Text="모서리 둥글기" Margin="0,12,0,4" Foreground="{DynamicResource SecondaryTextBrush}"/>
                     <Slider x:Name="CornerRadiusSlider" Minimum="0" Maximum="32" ValueChanged="DesignControl_Changed"/>
-                    <TextBlock Text="글자/요소 크기" Margin="0,12,0,4" Foreground="{DynamicResource SecondaryTextBrush}"/>
+                    <TextBlock Text="방송 글자/요소 크기" Margin="0,12,0,4" Foreground="{DynamicResource SecondaryTextBrush}"/>
                     <Slider x:Name="FontScaleSlider" Minimum="70" Maximum="140" ValueChanged="DesignControl_Changed"/>
                 </StackPanel>
             </ScrollViewer>
@@ -60,7 +60,7 @@
                         <TextBlock x:Name="PreviewSession" Text="+128 RP" Foreground="#70D6A6" VerticalAlignment="Center" FontSize="18" FontWeight="Bold"/>
                     </StackPanel>
                 </Border>
-                <TextBlock Text="설정은 PC 오버레이와 OBS 방송 출력에 함께 적용됩니다." Margin="0,16,0,0" Foreground="{DynamicResource MutedTextBrush}"/>
+                <TextBlock Text="표시 항목과 스타일은 함께 적용되며, 크기는 방송과 PC에서 각각 설정합니다." Margin="0,16,0,0" Foreground="{DynamicResource MutedTextBrush}"/>
             </StackPanel>
         </Border>
     </Grid>
