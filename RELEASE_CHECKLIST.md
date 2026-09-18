@@ -9,7 +9,7 @@
 - [x] 랭크 이미지 릴리즈 빌드 내장
 - [x] OBS Browser Source 출력
 - [x] OBS 1200 × 720 권장 캔버스
-- [x] Standard / Compact / Minimal / Vertical / Stream Bar
+- [x] Standard / Compact / Minimal / Vertical
 - [x] Compact / Minimal 표시 구성 차별화
 - [x] PC 오버레이와 OBS 크기 설정 분리
 - [x] PC 오버레이 위치 / 투명도 / 클릭 통과 / 항상 위 / 잠금
