@@ -7,7 +7,8 @@
         WindowStyle="None"
         ResizeMode="NoResize"
         SizeToContent="WidthAndHeight"
-        ShowInTaskbar="True"
+        ShowInTaskbar="False"
+        ShowActivated="False"
         WindowStartupLocation="Manual">
     <Grid>
         <Border x:Name="ScaleContainer"
@@ -27,15 +28,9 @@
                             Width="60"
                             Height="60"
                             Margin="0,0,14,0"
-                            Background="#334B6FFF"
-                            CornerRadius="12">
-                        <TextBlock x:Name="BadgeText"
-                                   Text="RANK"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   Foreground="White"
-                                   FontWeight="Bold"
-                                   FontSize="13"/>
+                            Background="Transparent">
+                        <Image x:Name="RankIconImage"
+                               Stretch="Uniform"/>
                     </Border>
 
                     <StackPanel x:Name="InfoPanel"
