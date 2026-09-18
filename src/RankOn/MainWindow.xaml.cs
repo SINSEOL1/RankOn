@@ -21,6 +21,7 @@ public partial class MainWindow : Window
         App.RankPollingService.Changed += RankPollingService_Changed;
         App.PcOverlayService.Changed += PcOverlayService_Changed;
         _hotkeyService.Attach(this, () => _ = App.PcOverlayService.ToggleAsync());
+        App.LocalizationService.ApplyTo(this);
         UpdateSidebar();
     }
 
@@ -71,7 +72,7 @@ public partial class MainWindow : Window
             _ => new HomePage()
         };
 
-        PageTitle.Text = page switch
+        var title = page switch
         {
             "Broadcast" => "방송 출력",
             "Overlay" => "오버레이",
@@ -81,6 +82,29 @@ public partial class MainWindow : Window
             "About" => "정보",
             _ => "홈"
         };
+
+        PageTitle.Text = App.LocalizationService.T(title);
+
+        if (PageContent.Content is DependencyObject content)
+        {
+            App.LocalizationService.ApplyTo(content);
+        }
+    }
+
+    public void RefreshLocalization()
+    {
+        App.LocalizationService.ApplyTo(this);
+        Navigate(PageTitle.Text switch
+        {
+            "Broadcast" or "配信出力" or "直播输出" => "Broadcast",
+            "Overlay" or "オーバーレイ" or "悬浮层" => "Overlay",
+            "Design" or "デザイン" or "设计" => "Design",
+            "Profile" or "プロフィール" or "资料" => "Profiles",
+            "Settings" or "設定" or "设置" => "Settings",
+            "About" or "情報" or "关于" => "About",
+            _ => "Home"
+        });
+        UpdateSidebar();
     }
 
     private void UpdateSidebar()
@@ -90,14 +114,14 @@ public partial class MainWindow : Window
 
         if (profile is null)
         {
-            SidebarNicknameText.Text = "프로필 미등록";
-            SidebarRankText.Text = "닉네임을 등록해 시작하세요";
+            SidebarNicknameText.Text = App.LocalizationService.T("프로필 미등록");
+            SidebarRankText.Text = App.LocalizationService.T("닉네임을 등록해 시작하세요");
             return;
         }
 
         SidebarNicknameText.Text = profile.Nickname;
         SidebarRankText.Text = snapshot is null
-            ? "랭크 정보를 불러오는 중"
-            : $"{snapshot.TierDisplayName} · {snapshot.Rp:N0} RP";
+            ? App.LocalizationService.T("랭크 정보를 불러오는 중입니다.")
+            : $"{App.LocalizationService.Tier(snapshot.TierKey, snapshot.Division)} · {snapshot.Rp:N0} RP";
     }
 }
