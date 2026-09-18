@@ -28,6 +28,9 @@ public sealed class RankApiResponse
     [JsonPropertyName("cuts")]
     public RankCutsResponse Cuts { get; set; } = new();
 
+    [JsonPropertyName("nextTier")]
+    public RankNextTierResponse? NextTier { get; set; }
+
     [JsonPropertyName("nextCut")]
     public RankNextCutResponse? NextCut { get; set; }
 
@@ -55,6 +58,9 @@ public sealed class RankApiResponse
             Division = Tier.Division,
             DemigodCutRp = Cuts.DemigodRp,
             EternityCutRp = Cuts.EternityRp,
+            NextTierName = NextTier?.TierNameKo,
+            NextTierRp = NextTier?.Rp,
+            NextTierRemainingRp = NextTier?.RemainingRp,
             NextCutTierName = NextCut?.TierNameKo,
             NextCutRp = NextCut?.Rp,
             NextCutRemainingRp = NextCut?.RemainingRp
@@ -93,6 +99,18 @@ public sealed class RankCutsResponse
 
     [JsonPropertyName("eternityRp")]
     public int? EternityRp { get; set; }
+}
+
+public sealed class RankNextTierResponse
+{
+    [JsonPropertyName("tierNameKo")]
+    public string TierNameKo { get; set; } = "";
+
+    [JsonPropertyName("rp")]
+    public int Rp { get; set; }
+
+    [JsonPropertyName("remainingRp")]
+    public int RemainingRp { get; set; }
 }
 
 public sealed class RankNextCutResponse
