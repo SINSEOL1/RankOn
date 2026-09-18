@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.IO;
 using System.Text.Json;
 using RankOn.Models;
@@ -20,6 +21,7 @@ public sealed class AppSettingsService
 
         if (!File.Exists(SettingsPath))
         {
+            Current.Language = ResolveInitialLanguage();
             await SaveAsync(Current);
             return Current;
         }
@@ -35,6 +37,16 @@ public sealed class AppSettingsService
         }
 
         return Current;
+    }
+
+    private static string ResolveInitialLanguage()
+    {
+        var name = CultureInfo.CurrentUICulture.Name;
+
+        if (name.StartsWith("ko", StringComparison.OrdinalIgnoreCase)) return "ko-KR";
+        if (name.StartsWith("ja", StringComparison.OrdinalIgnoreCase)) return "ja-JP";
+        if (name.StartsWith("zh", StringComparison.OrdinalIgnoreCase)) return "zh-CN";
+        return "en-US";
     }
 
     public async Task SaveAsync(AppSettings settings)

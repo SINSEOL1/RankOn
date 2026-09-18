@@ -1,0 +1,97 @@
+<Window x:Class="RankOn.Windows.OverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="RankOn Overlay"
+        AllowsTransparency="True"
+        Background="Transparent"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight"
+        ShowInTaskbar="True"
+        WindowStartupLocation="Manual">
+    <Grid>
+        <Border x:Name="ScaleContainer"
+                Background="Transparent">
+            <Border x:Name="RootBorder"
+                Padding="16,13"
+                Background="#E6101218"
+                BorderBrush="#20FFFFFF"
+                BorderThickness="1"
+                CornerRadius="14"
+                MouseLeftButtonDown="RootBorder_MouseLeftButtonDown">
+            <StackPanel>
+                <StackPanel x:Name="ContentPanel"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center">
+                    <Border x:Name="BadgeBorder"
+                            Width="60"
+                            Height="60"
+                            Margin="0,0,14,0"
+                            Background="#334B6FFF"
+                            CornerRadius="12">
+                        <TextBlock x:Name="BadgeText"
+                                   Text="RANK"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Foreground="White"
+                                   FontWeight="Bold"
+                                   FontSize="13"/>
+                    </Border>
+
+                    <StackPanel x:Name="InfoPanel"
+                                VerticalAlignment="Center">
+                        <TextBlock x:Name="NicknameText"
+                                   Foreground="White"
+                                   FontWeight="Bold"
+                                   FontSize="15"/>
+
+                        <StackPanel x:Name="RankLinePanel"
+                                    Orientation="Horizontal"
+                                    Margin="0,4,0,0">
+                            <TextBlock x:Name="TierText"
+                                       Foreground="White"
+                                       FontWeight="SemiBold"
+                                       FontSize="17"/>
+                            <TextBlock x:Name="RpText"
+                                       Margin="8,0,0,0"
+                                       Foreground="#D0D6DF"
+                                       FontSize="13"
+                                       VerticalAlignment="Bottom"/>
+                            <TextBlock x:Name="RankText"
+                                       Margin="8,0,0,0"
+                                       Foreground="#D0D6DF"
+                                       FontSize="13"
+                                       VerticalAlignment="Bottom"/>
+                        </StackPanel>
+
+                        <TextBlock x:Name="SeasonText"
+                                   Margin="0,5,0,0"
+                                   Foreground="#AEB7C3"
+                                   FontSize="12"/>
+
+                        <TextBlock x:Name="TargetText"
+                                   Margin="0,3,0,0"
+                                   Foreground="#7FA4FF"
+                                   FontSize="12"/>
+                    </StackPanel>
+
+                    <TextBlock x:Name="SessionText"
+                               Margin="20,0,0,0"
+                               VerticalAlignment="Center"
+                               Foreground="#70D6A6"
+                               FontSize="18"
+                               FontWeight="Bold"/>
+                </StackPanel>
+
+                <TextBlock x:Name="PositionHint"
+                           Text="위치 조정 중 · 드래그해서 이동"
+                           Margin="0,10,0,0"
+                           HorizontalAlignment="Center"
+                           Foreground="#D0D6DF"
+                           FontSize="11"
+                           Visibility="Collapsed"/>
+            </StackPanel>
+            </Border>
+        </Border>
+    </Grid>
+</Window>

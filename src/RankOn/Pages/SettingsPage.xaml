@@ -1,9 +1,19 @@
 <UserControl x:Class="RankOn.Pages.SettingsPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Loaded="UserControl_Loaded">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="28">
             <Border Padding="22" Background="{DynamicResource SurfaceBrush}" CornerRadius="12">
+                <StackPanel>
+                    <TextBlock Text="일반" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                    <CheckBox x:Name="StartWithWindowsCheckBox" Content="Windows 시작 시 실행" Margin="0,14,0,0" Click="GeneralSetting_Changed"/>
+                    <CheckBox x:Name="StartMinimizedCheckBox" Content="실행 시 트레이에서 시작" Click="GeneralSetting_Changed"/>
+                    <CheckBox x:Name="CloseToTrayCheckBox" Content="X 버튼을 누르면 트레이로 이동" Click="GeneralSetting_Changed"/>
+                    <CheckBox x:Name="AutoUpdateCheckBox" Content="새 버전 자동 확인" Click="GeneralSetting_Changed"/>
+                </StackPanel>
+            </Border>
+            <Border Margin="0,18,0,0" Padding="22" Background="{DynamicResource SurfaceBrush}" CornerRadius="12">
                 <StackPanel>
                     <TextBlock Text="테마" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
                     <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
@@ -13,25 +23,19 @@
                     </StackPanel>
                 </StackPanel>
             </Border>
-
             <Border Margin="0,18,0,0" Padding="22" Background="{DynamicResource SurfaceBrush}" CornerRadius="12">
                 <StackPanel>
                     <TextBlock Text="언어" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
-                    <ComboBox x:Name="LanguageComboBox" Width="220" Margin="0,16,0,0" HorizontalAlignment="Left">
-                        <ComboBoxItem Content="한국어" Tag="ko-KR" IsSelected="True"/>
-                        <ComboBoxItem Content="English" Tag="en-US"/>
-                        <ComboBoxItem Content="日本語" Tag="ja-JP"/>
-                        <ComboBoxItem Content="简体中文" Tag="zh-CN"/>
+                    <ComboBox x:Name="LanguageComboBox" Width="220" Margin="0,16,0,0" HorizontalAlignment="Left" SelectionChanged="LanguageComboBox_SelectionChanged">
+                        <ComboBoxItem Content="한국어" Tag="ko-KR"/><ComboBoxItem Content="English" Tag="en-US"/><ComboBoxItem Content="日本語" Tag="ja-JP"/><ComboBoxItem Content="简体中文" Tag="zh-CN"/>
                     </ComboBox>
+                    <TextBlock Text="언어 설정은 저장되며 다음 실행부터 적용됩니다." Margin="0,8,0,0" Foreground="{DynamicResource MutedTextBrush}"/>
                 </StackPanel>
             </Border>
-
             <Border Margin="0,18,0,0" Padding="22" Background="{DynamicResource SurfaceBrush}" CornerRadius="12">
                 <StackPanel>
                     <TextBlock Text="데이터" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
-                    <TextBlock Text="자동 랭크 갱신 60초"
-                               Margin="0,12,0,0"
-                               Foreground="{DynamicResource SecondaryTextBrush}"/>
+                    <TextBlock Text="자동 랭크 갱신 60초 · 수동 새로고침 쿨다운 10초" Margin="0,12,0,0" Foreground="{DynamicResource SecondaryTextBrush}"/>
                 </StackPanel>
             </Border>
         </StackPanel>

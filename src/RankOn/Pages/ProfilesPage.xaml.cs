@@ -14,6 +14,7 @@ public partial class ProfilesPage : UserControl
 
     private void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
+        App.LocalizationService.ApplyTo(this);
         UpdateCurrentProfile();
     }
 
@@ -36,28 +37,28 @@ public partial class ProfilesPage : UserControl
 
         if (string.IsNullOrWhiteSpace(nickname))
         {
-            RegistrationStatusText.Text = "닉네임을 입력해주세요.";
+            RegistrationStatusText.Text = App.LocalizationService.T("닉네임을 입력해주세요.");
             return;
         }
 
         RegisterButton.IsEnabled = false;
         NicknameTextBox.IsEnabled = false;
-        RegistrationStatusText.Text = "프로필을 확인하는 중입니다.";
+        RegistrationStatusText.Text = App.LocalizationService.T("프로필을 확인하는 중입니다.");
 
         try
         {
             await App.RankPollingService.SetProfileByNicknameAsync(nickname);
-            RegistrationStatusText.Text = "프로필을 등록했습니다.";
+            RegistrationStatusText.Text = App.LocalizationService.T("프로필을 등록했습니다.");
             UpdateCurrentProfile();
         }
         catch (HttpRequestException ex) when (
             ex.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
-            RegistrationStatusText.Text = "입력한 닉네임을 찾지 못했습니다.";
+            RegistrationStatusText.Text = App.LocalizationService.T("입력한 닉네임을 찾지 못했습니다.");
         }
         catch
         {
-            RegistrationStatusText.Text = "프로필을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.";
+            RegistrationStatusText.Text = App.LocalizationService.T("프로필을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.");
         }
         finally
         {
@@ -73,7 +74,7 @@ public partial class ProfilesPage : UserControl
 
         if (profile is null)
         {
-            CurrentNicknameText.Text = "등록된 프로필 없음";
+            CurrentNicknameText.Text = App.LocalizationService.T("등록된 프로필 없음");
             CurrentRankText.Text = "";
             return;
         }
@@ -81,7 +82,7 @@ public partial class ProfilesPage : UserControl
         CurrentNicknameText.Text = profile.Nickname;
 
         CurrentRankText.Text = snapshot is null
-            ? App.RankPollingService.LastError ?? "랭크 정보를 불러오는 중입니다."
-            : $"{snapshot.TierDisplayName} · {snapshot.Rp:N0} RP · #{snapshot.Rank:N0}";
+            ? App.LocalizationService.T(App.RankPollingService.LastError ?? "랭크 정보를 불러오는 중입니다.")
+            : $"{App.LocalizationService.Tier(snapshot.TierKey, snapshot.Division)} · {snapshot.Rp:N0} RP · #{snapshot.Rank:N0}";
     }
 }

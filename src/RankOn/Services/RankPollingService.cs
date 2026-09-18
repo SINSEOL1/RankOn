@@ -156,19 +156,33 @@ public sealed class RankPollingService : IAsyncDisposable
 
     private void ApplyOverlayState(RankSnapshot snapshot)
     {
+        var settings = _settingsService.Current;
         var targetText = RankTargetDisplayService.GetText(
             snapshot,
-            _settingsService.Current.TargetRpDisplayMode);
+            settings.TargetRpDisplayMode);
 
         _overlayStateService.Set(new OverlayState(
             true,
             snapshot.Nickname,
-            snapshot.TierDisplayName,
+            App.LocalizationService.Tier(snapshot.TierKey, snapshot.Division),
+            snapshot.TierKey,
             snapshot.Rp,
             snapshot.Rank,
             _sessionService.GetDelta(snapshot.Rp),
-            FormatSeasonRemaining(snapshot.SeasonEnd),
-            targetText));
+            App.LocalizationService.SeasonRemaining(snapshot.SeasonEnd),
+            App.LocalizationService.Target(targetText),
+            settings.OverlayPreset,
+            settings.OverlayBackgroundEnabled,
+            settings.OverlayBackgroundOpacity,
+            settings.OverlayCornerRadius,
+            settings.OverlayFontScale,
+            settings.OverlayShowNickname,
+            settings.OverlayShowTier,
+            settings.OverlayShowRp,
+            settings.OverlayShowRank,
+            settings.OverlayShowSession,
+            settings.OverlayShowSeason,
+            settings.OverlayShowTarget));
     }
 
     private async Task RunLoopAsync(CancellationToken cancellationToken)
@@ -190,24 +204,14 @@ public sealed class RankPollingService : IAsyncDisposable
 
     private static string FormatSeasonRemaining(DateTimeOffset? seasonEnd)
     {
-        if (seasonEnd is null)
-        {
-            return "";
-        }
+        if (seasonEnd is null) return "";
 
         var remaining = seasonEnd.Value - DateTimeOffset.Now;
+        if (remaining <= TimeSpan.Zero) return "시즌 종료";
 
-        if (remaining <= TimeSpan.Zero)
-        {
-            return "시즌 종료";
-        }
-
-        if (remaining.TotalDays >= 1)
-        {
-            return $"시즌 종료까지 {(int)remaining.TotalDays}일 {remaining.Hours}시간";
-        }
-
-        return $"시즌 종료까지 {Math.Max(0, remaining.Hours)}시간 {remaining.Minutes}분";
+        return remaining.TotalDays >= 1
+            ? $"시즌 종료까지 {(int)remaining.TotalDays}일 {remaining.Hours}시간"
+            : $"시즌 종료까지 {Math.Max(0, remaining.Hours)}시간 {remaining.Minutes}분";
     }
 
     private static string GetErrorMessage(Exception exception)

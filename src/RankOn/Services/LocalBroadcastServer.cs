@@ -23,10 +23,7 @@ public sealed class LocalBroadcastServer
 
     public async Task StartAsync()
     {
-        if (_app is not null)
-        {
-            return;
-        }
+        if (_app is not null) return;
 
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions
         {
@@ -38,7 +35,6 @@ public sealed class LocalBroadcastServer
         builder.Services.AddSingleton(_stateService);
 
         var app = builder.Build();
-
         app.MapGet("/api/state", (OverlayStateService state) => Results.Json(state.Get()));
         app.MapGet("/overlay", () => Results.Content(OverlayHtml, "text/html; charset=utf-8"));
 
@@ -48,10 +44,7 @@ public sealed class LocalBroadcastServer
 
     public async Task StopAsync()
     {
-        if (_app is null)
-        {
-            return;
-        }
+        if (_app is null) return;
 
         await _app.StopAsync();
         await _app.DisposeAsync();
@@ -66,8 +59,12 @@ public sealed class LocalBroadcastServer
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent;font-family:Segoe UI,Arial,sans-serif}
-#root{display:none;box-sizing:border-box;align-items:center;gap:16px;padding:14px 18px;color:#fff;background:rgba(16,18,24,.88);border:1px solid rgba(255,255,255,.10);border-radius:14px;width:max-content;min-width:430px}
-.badge{width:62px;height:62px;border-radius:12px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#b9c2d0}
+#root{display:none;box-sizing:border-box;align-items:center;gap:16px;padding:14px 18px;color:#fff;width:max-content;min-width:430px;transform-origin:top left}
+#root.vertical{flex-direction:column;text-align:center;min-width:190px}
+#root.vertical .main{align-items:center}
+#root.vertical .rankline{justify-content:center}
+#root.vertical .session{margin-left:0;padding-left:0}
+.badge{width:62px;height:62px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
 .main{display:flex;flex-direction:column;gap:4px}
 .name{font-size:15px;font-weight:700}
 .rankline{display:flex;align-items:baseline;gap:8px}
@@ -75,13 +72,12 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 .rp,.place,.season{font-size:13px;color:#b9c2d0}
 .target{font-size:12px;color:#7aa2ff}
 .session{margin-left:auto;padding-left:18px;font-size:18px;font-weight:700}
-.positive{color:#70d6a6}
-.negative{color:#ff8e8e}
+.positive{color:#70d6a6}.negative{color:#ff8e8e}
 </style>
 </head>
 <body>
 <div id="root">
-  <div class="badge">RANK</div>
+  <div class="badge" id="badge">RANK</div>
   <div class="main">
     <div class="name" id="name"></div>
     <div class="rankline">
@@ -96,25 +92,41 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 </div>
 <script>
 const root=document.getElementById('root');
-const set=(id,value)=>document.getElementById(id).textContent=value;
+const get=id=>document.getElementById(id);
+const show=(id,on)=>get(id).style.display=on?'':'none';
+const badgeText={eternity:'ET',demigod:'DG',mythril:'MI',meteorite:'ME',diamond:'DI',platinum:'PL',gold:'GO',silver:'SI',bronze:'BR',iron:'IR'};
+const badgeColor={eternity:'#915dff',demigod:'#df5ddb',mythril:'#61cee2',meteorite:'#7270ff',diamond:'#5791ff',platinum:'#4abeb9',gold:'#d3a449',silver:'#95a3b4',bronze:'#ac6f4b',iron:'#686f7c'};
 async function refresh(){
   try{
     const response=await fetch('/api/state',{cache:'no-store'});
     const state=await response.json();
     if(!state.hasData){root.style.display='none';return}
     root.style.display='flex';
-    set('name',state.nickname);
-    set('tier',state.tier);
-    set('rp',state.rp.toLocaleString()+' RP');
-    set('place','#'+state.rank.toLocaleString());
-    set('season',state.seasonRemaining);
-    const target=document.getElementById('target');
-    target.textContent=state.targetRpText||'';
-    target.style.display=state.targetRpText?'block':'none';
-    const session=document.getElementById('session');
+    root.className=String(state.preset||'').toLowerCase()==='vertical'?'vertical':'';
+    root.style.background=state.backgroundEnabled?'rgba(16,18,24,'+state.backgroundOpacity+')':'transparent';
+    root.style.border=state.backgroundEnabled?'1px solid rgba(255,255,255,.10)':'0';
+    root.style.borderRadius=state.cornerRadius+'px';
+    root.style.transform='scale('+state.fontScale+')';
+    get('name').textContent=state.nickname;
+    get('tier').textContent=state.tier;
+    get('rp').textContent=state.rp.toLocaleString()+' RP';
+    get('place').textContent=state.rank>0?'#'+state.rank.toLocaleString():'';
+    get('season').textContent=state.seasonRemaining||'';
+    get('target').textContent=state.targetRpText||'';
+    const badge=get('badge');
+    badge.textContent=badgeText[state.tierKey]||'RANK';
+    badge.style.background=badgeColor[state.tierKey]||'#686f7c';
+    const session=get('session');
     const delta=state.sessionDelta;
     session.textContent=(delta>0?'+':'')+delta.toLocaleString()+' RP';
     session.className='session '+(delta>=0?'positive':'negative');
+    show('name',state.showNickname);
+    show('tier',state.showTier);
+    show('rp',state.showRp);
+    show('place',state.showRank);
+    show('session',state.showSession);
+    show('season',state.showSeason&&!!state.seasonRemaining);
+    show('target',state.showTarget&&!!state.targetRpText);
   }catch{}
 }
 refresh();
