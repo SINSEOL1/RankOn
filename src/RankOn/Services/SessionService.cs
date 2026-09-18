@@ -4,18 +4,29 @@ namespace RankOn.Services;
 
 public sealed class SessionService
 {
-    public SessionState Current { get; } = new();
+    private readonly AppSettingsService _settingsService;
 
-    public void StartFromCurrent(int currentRp)
+    public SessionService(AppSettingsService settingsService)
     {
-        Current.StartRp = currentRp;
-        Current.StartedAt = DateTimeOffset.Now;
+        _settingsService = settingsService;
     }
 
-    public void StartFromManual(int startRp)
+    public SessionState Current { get; } = new();
+
+    public void Initialize(AppSettings settings)
     {
-        Current.StartRp = Math.Max(0, startRp);
-        Current.StartedAt = DateTimeOffset.Now;
+        Current.StartRp = settings.SessionStartRp;
+        Current.StartedAt = settings.SessionStartedAt;
+    }
+
+    public async Task StartFromCurrentAsync(int currentRp)
+    {
+        await SaveAsync(currentRp);
+    }
+
+    public async Task StartFromManualAsync(int startRp)
+    {
+        await SaveAsync(Math.Max(0, startRp));
     }
 
     public int GetDelta(int currentRp)
@@ -23,9 +34,25 @@ public sealed class SessionService
         return Current.StartRp is int startRp ? currentRp - startRp : 0;
     }
 
-    public void Reset()
+    public async Task ResetAsync()
     {
         Current.StartRp = null;
         Current.StartedAt = null;
+
+        var settings = _settingsService.Current;
+        settings.SessionStartRp = null;
+        settings.SessionStartedAt = null;
+        await _settingsService.SaveAsync(settings);
+    }
+
+    private async Task SaveAsync(int startRp)
+    {
+        Current.StartRp = startRp;
+        Current.StartedAt = DateTimeOffset.Now;
+
+        var settings = _settingsService.Current;
+        settings.SessionStartRp = Current.StartRp;
+        settings.SessionStartedAt = Current.StartedAt;
+        await _settingsService.SaveAsync(settings);
     }
 }
