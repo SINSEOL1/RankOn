@@ -84,6 +84,8 @@ public partial class OverlayWindow : Window
     {
         Topmost = settings.PcOverlayTopmost;
         Opacity = Math.Clamp(settings.PcOverlayOpacity, 0.2, 1.0);
+        var localScale = Math.Clamp(settings.PcOverlayScale, 0.5, 1.6);
+        ScaleContainer.LayoutTransform = new ScaleTransform(localScale, localScale);
         _locked = settings.PcOverlayLocked;
         _clickThrough = settings.PcOverlayClickThrough;
 
