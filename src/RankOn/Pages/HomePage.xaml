@@ -24,8 +24,8 @@
                         <ColumnDefinition Width="82"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Border Width="70" Height="70" Background="{DynamicResource SurfaceStrongBrush}" CornerRadius="14" VerticalAlignment="Top">
-                        <TextBlock x:Name="RankBadgeText" Text="RANK" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="{DynamicResource MutedTextBrush}"/>
+                    <Border x:Name="RankIconContainer" Width="70" Height="70" Background="Transparent" VerticalAlignment="Top">
+                        <Image x:Name="RankIconImage" Stretch="Uniform"/>
                     </Border>
                     <StackPanel Grid.Column="1">
                         <TextBlock x:Name="NicknameText" Text="프로필을 등록해주세요" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>

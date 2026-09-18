@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using RankOn.Services;
 
 namespace RankOn.Pages;
 
@@ -33,7 +34,7 @@ public partial class DesignPage : UserControl
             case "Compact":
                 s.OverlayBackgroundEnabled = true; s.OverlayBackgroundOpacity = 0.82; s.OverlayCornerRadius = 10; s.OverlayFontScale = 0.88; s.OverlayShowSeason = false; s.OverlayShowTarget = false; break;
             case "Minimal":
-                s.OverlayBackgroundEnabled = false; s.OverlayFontScale = 0.95; s.OverlayShowNickname = false; s.OverlayShowSeason = false; s.OverlayShowTarget = false; break;
+                s.OverlayBackgroundEnabled = true; s.OverlayBackgroundOpacity = 0.70; s.OverlayCornerRadius = 10; s.OverlayFontScale = 0.95; s.OverlayShowNickname = false; s.OverlayShowSeason = false; s.OverlayShowTarget = false; break;
             case "Vertical":
                 s.OverlayBackgroundEnabled = true; s.OverlayBackgroundOpacity = 0.88; s.OverlayCornerRadius = 18; s.OverlayFontScale = 1.0; s.OverlayShowNickname = true; s.OverlayShowSeason = true; s.OverlayShowTarget = true; break;
             case "StreamBar":
@@ -123,6 +124,7 @@ public partial class DesignPage : UserControl
     private void UpdatePreview()
     {
         var s = App.SettingsService.Current;
+        PreviewRankIcon.Source = TierIconService.GetImage("eternity");
         PreviewBorder.Background = s.OverlayBackgroundEnabled
             ? new SolidColorBrush(Color.FromArgb((byte)Math.Round(s.OverlayBackgroundOpacity * 255), 16, 18, 24))
             : Brushes.Transparent;

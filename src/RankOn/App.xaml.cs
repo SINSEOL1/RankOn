@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Threading;
 using System.Windows;
 using RankOn.Services;
 
@@ -5,6 +7,8 @@ namespace RankOn;
 
 public partial class App : System.Windows.Application
 {
+    private static Mutex? _instanceMutex;
+
     public static AppSettingsService SettingsService { get; } = new();
     public static OverlayStateService OverlayStateService { get; } = new();
     public static SessionService SessionService { get; } = new(SettingsService);
@@ -29,6 +33,21 @@ public partial class App : System.Windows.Application
     protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+
+        _instanceMutex = new Mutex(true, @"Local\SINSEOL.RankOn", out var createdNew);
+        var otherProcess = Process.GetProcessesByName("RankOn")
+            .Any(process => process.Id != Environment.ProcessId);
+
+        if (!createdNew || otherProcess)
+        {
+            System.Windows.MessageBox.Show(
+                "랭크온이 이미 실행 중입니다. 트레이에 실행 중인 랭크온을 종료한 뒤 다시 실행해주세요.",
+                "랭크온",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+            Shutdown();
+            return;
+        }
 
         var settings = await SettingsService.LoadAsync();
         SessionService.Initialize(settings);
@@ -136,6 +155,16 @@ public partial class App : System.Windows.Application
         RankApiService.Dispose();
         UpdateService.Dispose();
         await BroadcastServer.StopAsync();
+
+        try
+        {
+            _instanceMutex?.ReleaseMutex();
+        }
+        catch
+        {
+        }
+
+        _instanceMutex?.Dispose();
         base.OnExit(e);
     }
 }

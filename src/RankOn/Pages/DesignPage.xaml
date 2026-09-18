@@ -44,8 +44,8 @@
                 <TextBlock Text="실시간 미리보기" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
                 <Border x:Name="PreviewBorder" Margin="0,24,0,0" Padding="18" HorizontalAlignment="Left" Background="#E6101218" CornerRadius="14">
                     <StackPanel x:Name="PreviewPanel" Orientation="Horizontal">
-                        <Border x:Name="PreviewBadge" Width="62" Height="62" Background="#915DFF" CornerRadius="12">
-                            <TextBlock Text="ET" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontWeight="Bold"/>
+                        <Border x:Name="PreviewBadge" Width="62" Height="62" Background="Transparent">
+                            <Image x:Name="PreviewRankIcon" Stretch="Uniform"/>
                         </Border>
                         <StackPanel x:Name="PreviewInfo" Margin="16,0,24,0">
                             <TextBlock x:Name="PreviewNickname" Text="SINSEOL" Foreground="White" FontWeight="Bold"/>

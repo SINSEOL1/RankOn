@@ -4,6 +4,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using RankOn.Models;
+using RankOn.Services;
 
 namespace RankOn.Windows;
 
@@ -36,7 +37,8 @@ public partial class OverlayWindow : Window
         SessionText.Text = $"{(state.SessionDelta > 0 ? "+" : "")}{state.SessionDelta:N0} RP";
         SeasonText.Text = state.SeasonRemaining;
         TargetText.Text = state.TargetRpText;
-        BadgeText.Text = GetBadgeText(state.TierKey);
+        RankIconImage.Source = TierIconService.GetImage(state.TierKey);
+        BadgeBorder.Visibility = RankIconImage.Source is null ? Visibility.Collapsed : Visibility.Visible;
 
         NicknameText.Visibility = state.ShowNickname ? Visibility.Visible : Visibility.Collapsed;
         TierText.Visibility = state.ShowTier ? Visibility.Visible : Visibility.Collapsed;
@@ -74,7 +76,7 @@ public partial class OverlayWindow : Window
             ? new SolidColorBrush(Color.FromArgb((byte)Math.Min(90, (int)backgroundAlpha), 255, 255, 255))
             : Brushes.Transparent;
 
-        BadgeBorder.Background = new SolidColorBrush(GetTierColor(state.TierKey));
+        BadgeBorder.Background = Brushes.Transparent;
         SessionText.Foreground = state.SessionDelta >= 0
             ? new SolidColorBrush(Color.FromRgb(112, 214, 166))
             : new SolidColorBrush(Color.FromRgb(255, 142, 142));
@@ -141,7 +143,22 @@ public partial class OverlayWindow : Window
     private void OverlayWindow_SourceInitialized(object? sender, EventArgs e)
     {
         SourceInitialized -= OverlayWindow_SourceInitialized;
+        ApplyToolWindowStyle();
         SetClickThrough(!_positionMode && _locked && _clickThrough);
+    }
+
+    private void ApplyToolWindowStyle()
+    {
+        var handle = new WindowInteropHelper(this).Handle;
+        if (handle == IntPtr.Zero)
+        {
+            return;
+        }
+
+        var style = GetWindowLongPtr(handle, -20).ToInt64();
+        style |= 0x80;
+        style &= ~0x40000L;
+        SetWindowLongPtr(handle, -20, new IntPtr(style));
     }
 
     private void SetClickThrough(bool enabled)
@@ -164,40 +181,6 @@ public partial class OverlayWindow : Window
         }
 
         SetWindowLongPtr(handle, -20, new IntPtr(style));
-    }
-
-    private static string GetBadgeText(string tierKey)
-    {
-        return tierKey switch
-        {
-            "eternity" => "ET",
-            "demigod" => "DG",
-            "mythril" => "MI",
-            "meteorite" => "ME",
-            "diamond" => "DI",
-            "platinum" => "PL",
-            "gold" => "GO",
-            "silver" => "SI",
-            "bronze" => "BR",
-            _ => "IR"
-        };
-    }
-
-    private static Color GetTierColor(string tierKey)
-    {
-        return tierKey switch
-        {
-            "eternity" => Color.FromRgb(145, 93, 255),
-            "demigod" => Color.FromRgb(223, 93, 219),
-            "mythril" => Color.FromRgb(97, 206, 226),
-            "meteorite" => Color.FromRgb(114, 112, 255),
-            "diamond" => Color.FromRgb(87, 145, 255),
-            "platinum" => Color.FromRgb(74, 190, 185),
-            "gold" => Color.FromRgb(211, 164, 73),
-            "silver" => Color.FromRgb(149, 163, 180),
-            "bronze" => Color.FromRgb(172, 111, 75),
-            _ => Color.FromRgb(104, 111, 124)
-        };
     }
 
     private static IntPtr GetWindowLongPtr(IntPtr hWnd, int index)
