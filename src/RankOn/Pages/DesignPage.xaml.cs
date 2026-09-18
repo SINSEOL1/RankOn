@@ -63,13 +63,6 @@ public partial class DesignPage : UserControl
                 s.OverlayCornerRadius = 18;
                 s.OverlayFontScale = 1.0;
                 break;
-            case "StreamBar":
-                s.OverlayBackgroundEnabled = true;
-                s.OverlayBackgroundOpacity = 0.76;
-                s.OverlayCornerRadius = 8;
-                s.OverlayFontScale = 0.9;
-                s.OverlayShowSeason = false;
-                break;
             default:
                 s.OverlayBackgroundEnabled = true;
                 s.OverlayBackgroundOpacity = 0.88;
@@ -110,6 +103,11 @@ public partial class DesignPage : UserControl
     private void LoadControls()
     {
         var s = App.SettingsService.Current;
+        if (string.Equals(s.OverlayPreset, "StreamBar", StringComparison.OrdinalIgnoreCase))
+        {
+            s.OverlayPreset = "Compact";
+        }
+
         var previousLoaded = _loaded;
         _loaded = false;
 
@@ -117,7 +115,6 @@ public partial class DesignPage : UserControl
         CompactPreset.IsChecked = s.OverlayPreset == "Compact";
         MinimalPreset.IsChecked = s.OverlayPreset == "Minimal";
         VerticalPreset.IsChecked = s.OverlayPreset == "Vertical";
-        StreamBarPreset.IsChecked = s.OverlayPreset == "StreamBar";
         BackgroundCheckBox.IsChecked = s.OverlayBackgroundEnabled;
         BackgroundOpacitySlider.Value = s.OverlayBackgroundOpacity * 100;
         CornerRadiusSlider.Value = s.OverlayCornerRadius;

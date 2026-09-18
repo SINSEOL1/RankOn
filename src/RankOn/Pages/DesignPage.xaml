@@ -12,7 +12,6 @@
                     <RadioButton x:Name="CompactPreset" Content="Compact" Tag="Compact" Margin="0,10,0,0" Checked="Preset_Checked"/>
                     <RadioButton x:Name="MinimalPreset" Content="Minimal" Tag="Minimal" Margin="0,10,0,0" Checked="Preset_Checked"/>
                     <RadioButton x:Name="VerticalPreset" Content="Vertical" Tag="Vertical" Margin="0,10,0,0" Checked="Preset_Checked"/>
-                    <RadioButton x:Name="StreamBarPreset" Content="Stream Bar" Tag="StreamBar" Margin="0,10,0,0" Checked="Preset_Checked"/>
                     <Separator Margin="0,20,0,16" Background="{DynamicResource BorderBrush}"/>
                     <TextBlock Text="표시 항목" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
                     <TextBlock Text="목표 RP 표시" Margin="0,14,0,6" Foreground="{DynamicResource SecondaryTextBrush}"/>

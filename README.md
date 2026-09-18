@@ -13,7 +13,7 @@
 - Windows PC 오버레이 독립 출력
 - 위치 이동, 크기, 투명도, 항상 위, 클릭 통과, 잠금
 - Ctrl + Shift + R PC 오버레이 표시/숨기기
-- Standard / Compact / Minimal / Vertical / Stream Bar 프리셋
+- Standard / Compact / Minimal / Vertical 프리셋
 - 표시 항목, 배경 투명도, 모서리, 크기 설정
 - Light / Dark / 시스템 테마
 - 트레이 실행, Windows 시작 시 실행
