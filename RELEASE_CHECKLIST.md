@@ -1,0 +1,23 @@
+# RankOn v1.0.0 출시 체크
+
+- [x] 닉네임 등록 및 UID 저장
+- [x] 현재 시즌 랭크 / RP / 전체 순위 표시
+- [x] 60초 자동 갱신 / 10초 수동 갱신 쿨다운
+- [x] 세션 RP 시작값 저장 및 직접 입력
+- [x] 다음 티어 / 데미갓 / 이터니티 목표 표시
+- [x] 실제 랭크 티어 이미지 표시
+- [x] 랭크 이미지 릴리즈 빌드 내장
+- [x] OBS Browser Source 출력
+- [x] OBS 1200 × 720 권장 캔버스
+- [x] Standard / Compact / Minimal / Vertical / Stream Bar
+- [x] Compact / Minimal 표시 구성 차별화
+- [x] PC 오버레이와 OBS 크기 설정 분리
+- [x] PC 오버레이 위치 / 투명도 / 클릭 통과 / 항상 위 / 잠금
+- [x] 트레이 / Windows 시작 시 실행
+- [x] 한국어 / 영어 / 일본어 / 중국어
+- [x] GitHub Release 업데이트 확인
+- [x] Inno Setup 설치 프로그램
+- [x] v1.0.0 버전 설정
+- [ ] 최종 실사용 스모크 테스트
+- [ ] v1.0.0 태그 생성
+- [ ] GitHub Release 자동 빌드 확인
