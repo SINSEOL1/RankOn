@@ -78,7 +78,7 @@ public sealed class LocalBroadcastServer
             }
         }
 
-        LastError = lastError?.Message ?? "방송 출력 서버를 시작하지 못했습니다.";
+        LastError = "사용 가능한 방송 출력 포트를 찾지 못했습니다.";
         throw new InvalidOperationException(LastError, lastError);
     }
 
