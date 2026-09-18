@@ -87,9 +87,25 @@ public partial class App : System.Windows.Application
 
             owner.Dispatcher.Invoke(() =>
             {
+                var message = App.LocalizationService.Current switch
+                {
+                    "en-US" => $"New version {update.Version} is available. Open the download page?",
+                    "ja-JP" => $"新しいバージョン {update.Version} があります。ダウンロードページを開きますか？",
+                    "zh-CN" => $"发现新版本 {update.Version}。是否打开下载页面？",
+                    _ => $"새 버전 {update.Version}이 있습니다. 다운로드 페이지를 열까요?"
+                };
+
+                var title = App.LocalizationService.Current switch
+                {
+                    "en-US" => "RankOn Update",
+                    "ja-JP" => "RankOn アップデート",
+                    "zh-CN" => "RankOn 更新",
+                    _ => "랭크온 업데이트"
+                };
+
                 var result = System.Windows.MessageBox.Show(
-                    $"새 버전 {update.Version}이 있습니다. 다운로드 페이지를 열까요?",
-                    "랭크온 업데이트",
+                    message,
+                    title,
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Information);
 
