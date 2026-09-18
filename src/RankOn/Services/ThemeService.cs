@@ -1,0 +1,48 @@
+using System.Windows;
+
+namespace RankOn.Services;
+
+public sealed class ThemeService
+{
+    public string Current { get; private set; } = "Dark";
+
+    public void Apply(string theme)
+    {
+        var resolved = theme;
+
+        if (string.Equals(theme, "System", StringComparison.OrdinalIgnoreCase))
+        {
+            resolved = IsSystemDarkMode() ? "Dark" : "Light";
+        }
+
+        if (!string.Equals(resolved, "Light", StringComparison.OrdinalIgnoreCase))
+        {
+            resolved = "Dark";
+        }
+
+        var resources = System.Windows.Application.Current.Resources.MergedDictionaries;
+        resources.Clear();
+        resources.Add(new ResourceDictionary
+        {
+            Source = new Uri($"Themes/Theme.{resolved}.xaml", UriKind.Relative)
+        });
+
+        Current = resolved;
+    }
+
+    private static bool IsSystemDarkMode()
+    {
+        try
+        {
+            using var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(
+                @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize");
+
+            var value = key?.GetValue("AppsUseLightTheme");
+            return value is int mode && mode == 0;
+        }
+        catch
+        {
+            return true;
+        }
+    }
+}
