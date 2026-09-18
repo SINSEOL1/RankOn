@@ -11,6 +11,7 @@ public partial class SessionRpDialog : Window
     public SessionRpDialog(int currentRp, int? startRp)
     {
         InitializeComponent();
+        App.LocalizationService.ApplyTo(this);
 
         _currentRp = currentRp;
         RpTextBox.Text = (startRp ?? currentRp).ToString();
@@ -52,6 +53,6 @@ public partial class SessionRpDialog : Window
         }
 
         var delta = _currentRp - value;
-        PreviewText.Text = $"현재 RP 기준 {(delta > 0 ? "+" : "")}{delta:N0} RP";
+        PreviewText.Text = App.LocalizationService.CurrentRpDelta(delta);
     }
 }
