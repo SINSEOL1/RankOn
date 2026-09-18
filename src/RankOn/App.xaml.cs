@@ -53,6 +53,7 @@ public partial class App : System.Windows.Application
         SessionService.Initialize(settings);
         ThemeService.Apply(settings.Theme);
         LocalizationService.Apply(settings.Language);
+        _ = TierIconService.WarmupAsync();
         PcOverlayService.Initialize();
 
         if (settings.BroadcastEnabled)
