@@ -51,6 +51,13 @@ public sealed class LocalBroadcastServer
                 app = builder.Build();
                 app.MapGet("/api/state", (OverlayStateService state) => Results.Json(state.Get()));
                 app.MapGet("/api/health", () => Results.Json(new { ok = true, port }));
+                app.MapGet("/assets/rank-tiers", async () =>
+                {
+                    var bytes = await TierIconService.GetSpriteBytesAsync();
+                    return bytes is null
+                        ? Results.NotFound()
+                        : Results.File(bytes, "image/png");
+                });
                 app.MapGet("/overlay", () => Results.Content(OverlayHtml, "text/html; charset=utf-8"));
 
                 await app.StartAsync();
@@ -101,7 +108,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 #root.vertical .main{align-items:center}
 #root.vertical .rankline{justify-content:center}
 #root.vertical .session{margin-left:0;padding-left:0}
-.badge{width:62px;height:62px;object-fit:contain;display:block}
+.badge{width:62px;height:62px;display:block;background-image:url('/assets/rank-tiers');background-repeat:no-repeat;background-size:738.1px 143.19px;background-position-y:-40.48px}
 .main{display:flex;flex-direction:column;gap:4px}
 .name{font-size:15px;font-weight:700}
 .rankline{display:flex;align-items:baseline;gap:8px}
@@ -114,7 +121,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 </head>
 <body>
 <div id="root">
-  <img class="badge" id="badge" alt="" referrerpolicy="no-referrer">
+  <div class="badge" id="badge"></div>
   <div class="main">
     <div class="name" id="name"></div>
     <div class="rankline">
@@ -131,18 +138,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 const root=document.getElementById('root');
 const get=id=>document.getElementById(id);
 const show=(id,on)=>get(id).style.display=on?'':'none';
-const tierImages={
-  iron:'https://eternalreturn.fandom.com/wiki/Special:Redirect/file/RankedTier_Iron.png',
-  bronze:'https://eternalreturn.fandom.com/wiki/Special:Redirect/file/RankedTier_Bronze.png',
-  silver:'https://eternalreturn.fandom.com/wiki/Special:Redirect/file/RankedTier_Silver.png',
-  gold:'https://eternalreturn.fandom.com/wiki/Special:Redirect/file/RankedTier_Gold.png',
-  platinum:'https://eternalreturn.fandom.com/wiki/Special:Redirect/file/RankedTier_Platinum.png',
-  diamond:'https://eternalreturn.fandom.com/wiki/Special:Redirect/file/RankedTier_Diamond.png',
-  meteorite:'https://eternalreturn.fandom.com/wiki/Special:Redirect/file/RankedTier_Meteorite.png',
-  mythril:'https://eternalreturn.fandom.com/wiki/Special:Redirect/file/RankedTier_Mythril.png',
-  demigod:'https://eternalreturn.fandom.com/wiki/Special:Redirect/file/RankedTier_Titan.png',
-  eternity:'https://eternalreturn.fandom.com/wiki/Special:Redirect/file/RankedTier_Immortal.png'
-};
+const tierIndexes={iron:0,bronze:1,silver:2,gold:3,platinum:4,diamond:5,meteorite:6,mythril:7,demigod:8,eternity:9};
 async function refresh(){
   try{
     const response=await fetch('/api/state',{cache:'no-store'});
@@ -162,12 +158,13 @@ async function refresh(){
     get('season').textContent=state.seasonRemaining||'';
     get('target').textContent=state.targetRpText||'';
     const badge=get('badge');
-    const icon=tierImages[state.tierKey]||'';
-    if(icon&&badge.dataset.tier!==state.tierKey){
-      badge.src=icon;
-      badge.dataset.tier=state.tierKey;
+    const tierIndex=tierIndexes[state.tierKey];
+    if(Number.isInteger(tierIndex)){
+      badge.style.backgroundPositionX=(-(tierIndex*73.81+5.9))+'px';
+      show('badge',true);
+    }else{
+      show('badge',false);
     }
-    show('badge',!!icon);
     const session=get('session');
     const delta=state.sessionDelta;
     session.textContent=(delta>0?'+':'')+delta.toLocaleString()+' RP';
