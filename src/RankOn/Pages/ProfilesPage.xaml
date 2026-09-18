@@ -1,0 +1,19 @@
+<UserControl x:Class="RankOn.Pages.ProfilesPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="28">
+        <Border Padding="22" Background="{DynamicResource SurfaceBrush}" CornerRadius="12">
+            <StackPanel>
+                <TextBlock Text="프로필" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                <TextBlock Text="이터널 리턴 닉네임을 등록하면 고유 사용자 정보를 저장하고 이후 자동으로 랭크를 조회합니다."
+                           Margin="0,7,0,0"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource SecondaryTextBrush}"/>
+                <Button Content="+ 프로필 추가"
+                        Margin="0,22,0,0"
+                        HorizontalAlignment="Left"
+                        Style="{StaticResource PrimaryButtonStyle}"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>
