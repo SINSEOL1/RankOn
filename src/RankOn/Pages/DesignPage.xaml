@@ -3,119 +3,64 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Loaded="UserControl_Loaded">
     <Grid Margin="28">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="280"/>
-            <ColumnDefinition Width="18"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-
-        <Border Padding="22"
-                Background="{DynamicResource SurfaceBrush}"
-                CornerRadius="12">
-            <StackPanel>
-                <TextBlock Text="프리셋"
-                           FontSize="18"
-                           FontWeight="SemiBold"
-                           Foreground="{DynamicResource PrimaryTextBrush}"/>
-
-                <RadioButton Content="Standard"
-                             Margin="0,18,0,0"
-                             IsChecked="True"
-                             Foreground="{DynamicResource PrimaryTextBrush}"/>
-                <RadioButton Content="Compact"
-                             Margin="0,12,0,0"
-                             Foreground="{DynamicResource PrimaryTextBrush}"/>
-                <RadioButton Content="Minimal"
-                             Margin="0,12,0,0"
-                             Foreground="{DynamicResource PrimaryTextBrush}"/>
-                <RadioButton Content="Vertical"
-                             Margin="0,12,0,0"
-                             Foreground="{DynamicResource PrimaryTextBrush}"/>
-                <RadioButton Content="Stream Bar"
-                             Margin="0,12,0,0"
-                             Foreground="{DynamicResource PrimaryTextBrush}"/>
-
-                <Separator Margin="0,22,0,18"
-                           Background="{DynamicResource BorderBrush}"/>
-
-                <TextBlock Text="표시 항목"
-                           FontSize="18"
-                           FontWeight="SemiBold"
-                           Foreground="{DynamicResource PrimaryTextBrush}"/>
-
-                <TextBlock Text="목표 RP 표시"
-                           Margin="0,16,0,7"
-                           Foreground="{DynamicResource SecondaryTextBrush}"/>
-
-                <ComboBox x:Name="TargetRpDisplayComboBox"
-                          Height="38"
-                          SelectionChanged="TargetRpDisplayComboBox_SelectionChanged">
-                    <ComboBoxItem Content="자동" Tag="Auto"/>
-                    <ComboBoxItem Content="다음 티어" Tag="NextTier"/>
-                    <ComboBoxItem Content="데미갓" Tag="Demigod"/>
-                    <ComboBoxItem Content="이터니티" Tag="Eternity"/>
-                    <ComboBoxItem Content="숨김" Tag="Hidden"/>
-                </ComboBox>
-
-                <TextBlock Text="자동은 현재 티어에 맞는 다음 목표를 표시합니다."
-                           Margin="0,9,0,0"
-                           TextWrapping="Wrap"
-                           FontSize="11"
-                           Foreground="{DynamicResource MutedTextBrush}"/>
-            </StackPanel>
+        <Grid.ColumnDefinitions><ColumnDefinition Width="310"/><ColumnDefinition Width="18"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <Border Padding="22" Background="{DynamicResource SurfaceBrush}" CornerRadius="12">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="프리셋" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                    <RadioButton x:Name="StandardPreset" Content="Standard" Tag="Standard" Margin="0,16,0,0" Checked="Preset_Checked"/>
+                    <RadioButton x:Name="CompactPreset" Content="Compact" Tag="Compact" Margin="0,10,0,0" Checked="Preset_Checked"/>
+                    <RadioButton x:Name="MinimalPreset" Content="Minimal" Tag="Minimal" Margin="0,10,0,0" Checked="Preset_Checked"/>
+                    <RadioButton x:Name="VerticalPreset" Content="Vertical" Tag="Vertical" Margin="0,10,0,0" Checked="Preset_Checked"/>
+                    <RadioButton x:Name="StreamBarPreset" Content="Stream Bar" Tag="StreamBar" Margin="0,10,0,0" Checked="Preset_Checked"/>
+                    <Separator Margin="0,20,0,16" Background="{DynamicResource BorderBrush}"/>
+                    <TextBlock Text="표시 항목" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                    <TextBlock Text="목표 RP 표시" Margin="0,14,0,6" Foreground="{DynamicResource SecondaryTextBrush}"/>
+                    <ComboBox x:Name="TargetRpDisplayComboBox" Height="36" SelectionChanged="DesignControl_Changed">
+                        <ComboBoxItem Content="자동" Tag="Auto"/><ComboBoxItem Content="다음 티어" Tag="NextTier"/><ComboBoxItem Content="데미갓" Tag="Demigod"/><ComboBoxItem Content="이터니티" Tag="Eternity"/><ComboBoxItem Content="숨김" Tag="Hidden"/>
+                    </ComboBox>
+                    <CheckBox x:Name="ShowNicknameCheckBox" Content="닉네임" Checked="DesignControl_Changed" Unchecked="DesignControl_Changed"/>
+                    <CheckBox x:Name="ShowTierCheckBox" Content="티어" Checked="DesignControl_Changed" Unchecked="DesignControl_Changed"/>
+                    <CheckBox x:Name="ShowRpCheckBox" Content="RP" Checked="DesignControl_Changed" Unchecked="DesignControl_Changed"/>
+                    <CheckBox x:Name="ShowRankCheckBox" Content="순위" Checked="DesignControl_Changed" Unchecked="DesignControl_Changed"/>
+                    <CheckBox x:Name="ShowSessionCheckBox" Content="세션 RP" Checked="DesignControl_Changed" Unchecked="DesignControl_Changed"/>
+                    <CheckBox x:Name="ShowSeasonCheckBox" Content="시즌 남은 시간" Checked="DesignControl_Changed" Unchecked="DesignControl_Changed"/>
+                    <CheckBox x:Name="ShowTargetCheckBox" Content="목표 RP" Checked="DesignControl_Changed" Unchecked="DesignControl_Changed"/>
+                    <Separator Margin="0,18,0,16" Background="{DynamicResource BorderBrush}"/>
+                    <TextBlock Text="스타일" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                    <CheckBox x:Name="BackgroundCheckBox" Content="배경 표시" Checked="DesignControl_Changed" Unchecked="DesignControl_Changed"/>
+                    <TextBlock Text="배경 투명도" Margin="0,12,0,4" Foreground="{DynamicResource SecondaryTextBrush}"/>
+                    <Slider x:Name="BackgroundOpacitySlider" Minimum="0" Maximum="100" ValueChanged="DesignControl_Changed"/>
+                    <TextBlock Text="모서리 둥글기" Margin="0,12,0,4" Foreground="{DynamicResource SecondaryTextBrush}"/>
+                    <Slider x:Name="CornerRadiusSlider" Minimum="0" Maximum="32" ValueChanged="DesignControl_Changed"/>
+                    <TextBlock Text="글자/요소 크기" Margin="0,12,0,4" Foreground="{DynamicResource SecondaryTextBrush}"/>
+                    <Slider x:Name="FontScaleSlider" Minimum="70" Maximum="140" ValueChanged="DesignControl_Changed"/>
+                </StackPanel>
+            </ScrollViewer>
         </Border>
 
-        <Border Grid.Column="2"
-                Padding="22"
-                Background="{DynamicResource SurfaceBrush}"
-                CornerRadius="12">
+        <Border Grid.Column="2" Padding="22" Background="{DynamicResource SurfaceBrush}" CornerRadius="12">
             <StackPanel>
-                <TextBlock Text="실시간 미리보기"
-                           FontSize="18"
-                           FontWeight="SemiBold"
-                           Foreground="{DynamicResource PrimaryTextBrush}"/>
-
-                <Border Margin="0,24,0,0"
-                        Padding="18"
-                        HorizontalAlignment="Left"
-                        Background="#E6101218"
-                        CornerRadius="14">
-                    <StackPanel Orientation="Horizontal">
-                        <Border Width="62"
-                                Height="62"
-                                Background="#22FFFFFF"
-                                CornerRadius="12">
-                            <TextBlock Text="ET"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       Foreground="#B9C2D0"
-                                       FontWeight="Bold"/>
+                <TextBlock Text="실시간 미리보기" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                <Border x:Name="PreviewBorder" Margin="0,24,0,0" Padding="18" HorizontalAlignment="Left" Background="#E6101218" CornerRadius="14">
+                    <StackPanel x:Name="PreviewPanel" Orientation="Horizontal">
+                        <Border x:Name="PreviewBadge" Width="62" Height="62" Background="#915DFF" CornerRadius="12">
+                            <TextBlock Text="ET" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontWeight="Bold"/>
                         </Border>
-
-                        <StackPanel Margin="16,0,24,0">
-                            <TextBlock Text="SINSEOL"
-                                       Foreground="White"
-                                       FontWeight="Bold"/>
-
-                            <TextBlock Text="이터니티 · 9,800 RP · #104"
-                                       Margin="0,6,0,0"
-                                       Foreground="White"
-                                       FontSize="17"
-                                       FontWeight="SemiBold"/>
-
-                            <TextBlock Text="시즌 종료까지 54일"
-                                       Margin="0,5,0,0"
-                                       Foreground="#B9C2D0"
-                                       FontSize="12"/>
+                        <StackPanel x:Name="PreviewInfo" Margin="16,0,24,0">
+                            <TextBlock x:Name="PreviewNickname" Text="SINSEOL" Foreground="White" FontWeight="Bold"/>
+                            <StackPanel x:Name="PreviewRankLine" Orientation="Horizontal" Margin="0,6,0,0">
+                                <TextBlock x:Name="PreviewTier" Text="이터니티" Foreground="White" FontSize="17" FontWeight="SemiBold"/>
+                                <TextBlock x:Name="PreviewRp" Text=" · 9,800 RP" Foreground="White" FontSize="17" FontWeight="SemiBold"/>
+                                <TextBlock x:Name="PreviewRank" Text=" · #104" Foreground="White" FontSize="17" FontWeight="SemiBold"/>
+                            </StackPanel>
+                            <TextBlock x:Name="PreviewSeason" Text="시즌 종료까지 54일" Margin="0,5,0,0" Foreground="#B9C2D0" FontSize="12"/>
+                            <TextBlock x:Name="PreviewTarget" Margin="0,3,0,0" Foreground="#7AA2FF" FontSize="12"/>
                         </StackPanel>
-
-                        <TextBlock Text="+128 RP"
-                                   Foreground="#70D6A6"
-                                   VerticalAlignment="Center"
-                                   FontSize="18"
-                                   FontWeight="Bold"/>
+                        <TextBlock x:Name="PreviewSession" Text="+128 RP" Foreground="#70D6A6" VerticalAlignment="Center" FontSize="18" FontWeight="Bold"/>
                     </StackPanel>
                 </Border>
+                <TextBlock Text="설정은 PC 오버레이와 OBS 방송 출력에 함께 적용됩니다." Margin="0,16,0,0" Foreground="{DynamicResource MutedTextBrush}"/>
             </StackPanel>
         </Border>
     </Grid>

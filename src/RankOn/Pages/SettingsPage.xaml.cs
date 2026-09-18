@@ -5,21 +5,63 @@ namespace RankOn.Pages;
 
 public partial class SettingsPage : UserControl
 {
+    private bool _loaded;
+
     public SettingsPage()
     {
         InitializeComponent();
     }
 
-    private async void ThemeButton_Click(object sender, RoutedEventArgs e)
+    private void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
-        if (sender is not Button button || button.Tag is not string theme)
+        var s = App.SettingsService.Current;
+        StartWithWindowsCheckBox.IsChecked = s.StartWithWindows;
+        StartMinimizedCheckBox.IsChecked = s.StartMinimizedToTray;
+        CloseToTrayCheckBox.IsChecked = s.CloseToTray;
+        AutoUpdateCheckBox.IsChecked = s.AutoCheckUpdates;
+
+        foreach (var item in LanguageComboBox.Items.OfType<ComboBoxItem>())
         {
-            return;
+            if (string.Equals(item.Tag as string, s.Language, StringComparison.OrdinalIgnoreCase))
+            {
+                LanguageComboBox.SelectedItem = item;
+                break;
+            }
         }
 
-        var settings = App.SettingsService.Current;
-        settings.Theme = theme;
+        _loaded = true;
+    }
+
+    private async void GeneralSetting_Changed(object sender, RoutedEventArgs e)
+    {
+        if (!_loaded) return;
+
+        var s = App.SettingsService.Current;
+        s.StartWithWindows = StartWithWindowsCheckBox.IsChecked == true;
+        s.StartMinimizedToTray = StartMinimizedCheckBox.IsChecked == true;
+        s.CloseToTray = CloseToTrayCheckBox.IsChecked == true;
+        s.AutoCheckUpdates = AutoUpdateCheckBox.IsChecked == true;
+
+        App.StartupService.SetEnabled(s.StartWithWindows);
+        await App.SettingsService.SaveAsync(s);
+    }
+
+    private async void ThemeButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button { Tag: string theme }) return;
+
+        var s = App.SettingsService.Current;
+        s.Theme = theme;
         App.ThemeService.Apply(theme);
-        await App.SettingsService.SaveAsync(settings);
+        await App.SettingsService.SaveAsync(s);
+    }
+
+    private async void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!_loaded || LanguageComboBox.SelectedItem is not ComboBoxItem { Tag: string language }) return;
+
+        var s = App.SettingsService.Current;
+        s.Language = language;
+        await App.SettingsService.SaveAsync(s);
     }
 }
