@@ -17,4 +17,5 @@ public sealed class AppSettings
     public int RankRefreshSeconds { get; set; } = 60;
     public int? SessionStartRp { get; set; }
     public DateTimeOffset? SessionStartedAt { get; set; }
+    public string TargetRpDisplayMode { get; set; } = "Auto";
 }
