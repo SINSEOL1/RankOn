@@ -27,11 +27,20 @@ public partial class MainWindow : Window
 
     private void Window_Closing(object? sender, CancelEventArgs e)
     {
-        if (!App.IsExiting && App.SettingsService.Current.CloseToTray)
+        if (App.IsExiting)
+        {
+            return;
+        }
+
+        if (App.SettingsService.Current.CloseToTray)
         {
             e.Cancel = true;
             Hide();
+            return;
         }
+
+        e.Cancel = true;
+        App.ExitApplication();
     }
 
     private void Window_Closed(object? sender, EventArgs e)
