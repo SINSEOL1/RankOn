@@ -15,7 +15,6 @@ public partial class BroadcastPage : UserControl
     private void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
         App.LocalizationService.ApplyTo(this);
-        AddressText.Text = App.BroadcastServer.Address;
         UpdateView();
     }
 
@@ -63,9 +62,12 @@ public partial class BroadcastPage : UserControl
     private void UpdateView()
     {
         var running = App.BroadcastServer.IsRunning;
+        AddressText.Text = App.BroadcastServer.Address;
         ServerStatusText.Text = running
             ? App.LocalizationService.T("방송 출력 실행 중")
-            : App.LocalizationService.T("방송 출력 꺼짐");
+            : string.IsNullOrWhiteSpace(App.BroadcastServer.LastError)
+                ? App.LocalizationService.T("방송 출력 꺼짐")
+                : App.LocalizationService.T("방송 출력 시작 실패");
         ServerStatusText.Foreground = running
             ? (Brush)FindResource("PositiveBrush")
             : (Brush)FindResource("MutedTextBrush");
