@@ -8,12 +8,9 @@ public sealed class ThemeService
 
     public void Apply(string theme)
     {
-        var resolved = theme;
-
-        if (string.Equals(theme, "System", StringComparison.OrdinalIgnoreCase))
-        {
-            resolved = IsSystemDarkMode() ? "Dark" : "Light";
-        }
+        var resolved = string.Equals(theme, "System", StringComparison.OrdinalIgnoreCase)
+            ? (IsSystemDarkMode() ? "Dark" : "Light")
+            : theme;
 
         if (!string.Equals(resolved, "Light", StringComparison.OrdinalIgnoreCase))
         {
@@ -21,8 +18,15 @@ public sealed class ThemeService
         }
 
         var resources = System.Windows.Application.Current.Resources.MergedDictionaries;
-        resources.Clear();
-        resources.Add(new ResourceDictionary
+        var current = resources.FirstOrDefault(x =>
+            x.Source?.OriginalString.Contains("Themes/Theme.", StringComparison.OrdinalIgnoreCase) == true);
+
+        if (current is not null)
+        {
+            resources.Remove(current);
+        }
+
+        resources.Insert(0, new ResourceDictionary
         {
             Source = new Uri($"Themes/Theme.{resolved}.xaml", UriKind.Relative)
         });
@@ -37,8 +41,7 @@ public sealed class ThemeService
             using var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(
                 @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize");
 
-            var value = key?.GetValue("AppsUseLightTheme");
-            return value is int mode && mode == 0;
+            return key?.GetValue("AppsUseLightTheme") is int mode && mode == 0;
         }
         catch
         {
