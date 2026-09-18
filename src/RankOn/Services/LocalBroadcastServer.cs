@@ -9,46 +9,83 @@ namespace RankOn.Services;
 public sealed class LocalBroadcastServer
 {
     private readonly OverlayStateService _stateService;
-    private readonly int _port;
+    private readonly int _preferredPort;
     private WebApplication? _app;
+    private int _port;
 
     public LocalBroadcastServer(OverlayStateService stateService, int port)
     {
         _stateService = stateService;
+        _preferredPort = port;
         _port = port;
     }
 
     public string Address => $"http://127.0.0.1:{_port}/overlay";
     public bool IsRunning => _app is not null;
+    public string? LastError { get; private set; }
 
     public async Task StartAsync()
     {
-        if (_app is not null) return;
-
-        var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+        if (_app is not null)
         {
-            Args = Array.Empty<string>()
-        });
+            return;
+        }
 
-        builder.Logging.ClearProviders();
-        builder.WebHost.UseUrls($"http://127.0.0.1:{_port}");
-        builder.Services.AddSingleton(_stateService);
+        Exception? lastError = null;
 
-        var app = builder.Build();
-        app.MapGet("/api/state", (OverlayStateService state) => Results.Json(state.Get()));
-        app.MapGet("/overlay", () => Results.Content(OverlayHtml, "text/html; charset=utf-8"));
+        for (var port = _preferredPort; port <= _preferredPort + 10; port++)
+        {
+            WebApplication? app = null;
 
-        await app.StartAsync();
-        _app = app;
+            try
+            {
+                var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+                {
+                    Args = Array.Empty<string>()
+                });
+
+                builder.Logging.ClearProviders();
+                builder.WebHost.UseUrls($"http://127.0.0.1:{port}");
+                builder.Services.AddSingleton(_stateService);
+
+                app = builder.Build();
+                app.MapGet("/api/state", (OverlayStateService state) => Results.Json(state.Get()));
+                app.MapGet("/api/health", () => Results.Json(new { ok = true, port }));
+                app.MapGet("/overlay", () => Results.Content(OverlayHtml, "text/html; charset=utf-8"));
+
+                await app.StartAsync();
+
+                _app = app;
+                _port = port;
+                LastError = null;
+                return;
+            }
+            catch (Exception ex)
+            {
+                lastError = ex;
+
+                if (app is not null)
+                {
+                    await app.DisposeAsync();
+                }
+            }
+        }
+
+        LastError = lastError?.Message ?? "방송 출력 서버를 시작하지 못했습니다.";
+        throw new InvalidOperationException(LastError, lastError);
     }
 
     public async Task StopAsync()
     {
-        if (_app is null) return;
+        if (_app is null)
+        {
+            return;
+        }
 
         await _app.StopAsync();
         await _app.DisposeAsync();
         _app = null;
+        LastError = null;
     }
 
     private const string OverlayHtml = """
@@ -64,7 +101,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 #root.vertical .main{align-items:center}
 #root.vertical .rankline{justify-content:center}
 #root.vertical .session{margin-left:0;padding-left:0}
-.badge{width:62px;height:62px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
+.badge{width:62px;height:62px;object-fit:contain;display:block}
 .main{display:flex;flex-direction:column;gap:4px}
 .name{font-size:15px;font-weight:700}
 .rankline{display:flex;align-items:baseline;gap:8px}
@@ -77,7 +114,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 </head>
 <body>
 <div id="root">
-  <div class="badge" id="badge">RANK</div>
+  <img class="badge" id="badge" alt="" referrerpolicy="no-referrer">
   <div class="main">
     <div class="name" id="name"></div>
     <div class="rankline">
@@ -94,11 +131,22 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 const root=document.getElementById('root');
 const get=id=>document.getElementById(id);
 const show=(id,on)=>get(id).style.display=on?'':'none';
-const badgeText={eternity:'ET',demigod:'DG',mythril:'MI',meteorite:'ME',diamond:'DI',platinum:'PL',gold:'GO',silver:'SI',bronze:'BR',iron:'IR'};
-const badgeColor={eternity:'#915dff',demigod:'#df5ddb',mythril:'#61cee2',meteorite:'#7270ff',diamond:'#5791ff',platinum:'#4abeb9',gold:'#d3a449',silver:'#95a3b4',bronze:'#ac6f4b',iron:'#686f7c'};
+const tierImages={
+  iron:'https://eternalreturn.fandom.com/wiki/Special:Redirect/file/RankedTier_Iron.png',
+  bronze:'https://eternalreturn.fandom.com/wiki/Special:Redirect/file/RankedTier_Bronze.png',
+  silver:'https://eternalreturn.fandom.com/wiki/Special:Redirect/file/RankedTier_Silver.png',
+  gold:'https://eternalreturn.fandom.com/wiki/Special:Redirect/file/RankedTier_Gold.png',
+  platinum:'https://eternalreturn.fandom.com/wiki/Special:Redirect/file/RankedTier_Platinum.png',
+  diamond:'https://eternalreturn.fandom.com/wiki/Special:Redirect/file/RankedTier_Diamond.png',
+  meteorite:'https://eternalreturn.fandom.com/wiki/Special:Redirect/file/RankedTier_Meteorite.png',
+  mythril:'https://eternalreturn.fandom.com/wiki/Special:Redirect/file/RankedTier_Mythril.png',
+  demigod:'https://eternalreturn.fandom.com/wiki/Special:Redirect/file/RankedTier_Titan.png',
+  eternity:'https://eternalreturn.fandom.com/wiki/Special:Redirect/file/RankedTier_Immortal.png'
+};
 async function refresh(){
   try{
     const response=await fetch('/api/state',{cache:'no-store'});
+    if(!response.ok) return;
     const state=await response.json();
     if(!state.hasData){root.style.display='none';return}
     root.style.display='flex';
@@ -114,8 +162,12 @@ async function refresh(){
     get('season').textContent=state.seasonRemaining||'';
     get('target').textContent=state.targetRpText||'';
     const badge=get('badge');
-    badge.textContent=badgeText[state.tierKey]||'RANK';
-    badge.style.background=badgeColor[state.tierKey]||'#686f7c';
+    const icon=tierImages[state.tierKey]||'';
+    if(icon&&badge.dataset.tier!==state.tierKey){
+      badge.src=icon;
+      badge.dataset.tier=state.tierKey;
+    }
+    show('badge',!!icon);
     const session=get('session');
     const delta=state.sessionDelta;
     session.textContent=(delta>0?'+':'')+delta.toLocaleString()+' RP';
@@ -130,7 +182,7 @@ async function refresh(){
   }catch{}
 }
 refresh();
-setInterval(refresh,1000);
+setInterval(refresh,750);
 </script>
 </body>
 </html>
