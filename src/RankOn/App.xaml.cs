@@ -64,9 +64,11 @@ public partial class App : System.Windows.Application
         MainWindow = window;
         TrayService.Initialize(window);
 
-        if (!settings.StartMinimizedToTray)
+        window.Show();
+
+        if (settings.StartMinimizedToTray)
         {
-            window.Show();
+            window.Hide();
         }
 
         if (settings.AutoCheckUpdates)
