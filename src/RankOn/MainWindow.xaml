@@ -10,6 +10,7 @@
         Background="{DynamicResource WindowBackgroundBrush}"
         Foreground="{DynamicResource PrimaryTextBrush}"
         Loaded="Window_Loaded"
+        Closing="Window_Closing"
         Closed="Window_Closed">
     <Grid>
         <Grid.ColumnDefinitions>

@@ -1,11 +1,15 @@
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using RankOn.Pages;
+using RankOn.Services;
 
 namespace RankOn;
 
 public partial class MainWindow : Window
 {
+    private readonly GlobalHotkeyService _hotkeyService = new();
+
     public MainWindow()
     {
         InitializeComponent();
@@ -15,15 +19,33 @@ public partial class MainWindow : Window
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
         App.RankPollingService.Changed += RankPollingService_Changed;
+        App.PcOverlayService.Changed += PcOverlayService_Changed;
+        _hotkeyService.Attach(this, () => _ = App.PcOverlayService.ToggleAsync());
         UpdateSidebar();
+    }
+
+    private void Window_Closing(object? sender, CancelEventArgs e)
+    {
+        if (!App.IsExiting && App.SettingsService.Current.CloseToTray)
+        {
+            e.Cancel = true;
+            Hide();
+        }
     }
 
     private void Window_Closed(object? sender, EventArgs e)
     {
         App.RankPollingService.Changed -= RankPollingService_Changed;
+        App.PcOverlayService.Changed -= PcOverlayService_Changed;
+        _hotkeyService.Dispose();
     }
 
     private void RankPollingService_Changed(object? sender, EventArgs e)
+    {
+        Dispatcher.Invoke(UpdateSidebar);
+    }
+
+    private void PcOverlayService_Changed(object? sender, EventArgs e)
     {
         Dispatcher.Invoke(UpdateSidebar);
     }
@@ -74,7 +96,6 @@ public partial class MainWindow : Window
         }
 
         SidebarNicknameText.Text = profile.Nickname;
-
         SidebarRankText.Text = snapshot is null
             ? "랭크 정보를 불러오는 중"
             : $"{snapshot.TierDisplayName} · {snapshot.Rp:N0} RP";
