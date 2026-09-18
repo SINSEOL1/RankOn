@@ -14,6 +14,7 @@ public partial class SettingsPage : UserControl
 
     private void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
+        App.LocalizationService.ApplyTo(this);
         var s = App.SettingsService.Current;
         StartWithWindowsCheckBox.IsChecked = s.StartWithWindows;
         StartMinimizedCheckBox.IsChecked = s.StartMinimizedToTray;
@@ -62,6 +63,12 @@ public partial class SettingsPage : UserControl
 
         var s = App.SettingsService.Current;
         s.Language = language;
+        App.LocalizationService.Apply(language);
         await App.SettingsService.SaveAsync(s);
+
+        if (System.Windows.Application.Current.MainWindow is MainWindow mainWindow)
+        {
+            mainWindow.RefreshLocalization();
+        }
     }
 }
