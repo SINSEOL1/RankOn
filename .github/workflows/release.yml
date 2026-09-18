@@ -21,6 +21,13 @@ jobs:
         with:
           dotnet-version: "8.0.x"
 
+      - name: Download rank tier asset
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "src\RankOn\Resources" | Out-Null
+          curl.exe -L --fail "https://support.playeternalreturn.com/hc/article_attachments/45305347324825" -o "src\RankOn\Resources\rank-tiers.png"
+          if (-not (Test-Path "src\RankOn\Resources\rank-tiers.png")) { throw "rank tier asset download failed" }
+
       - name: Publish
         shell: pwsh
         run: |
