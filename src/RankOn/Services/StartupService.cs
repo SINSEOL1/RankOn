@@ -17,7 +17,7 @@ public sealed class StartupService
             var path = Environment.ProcessPath;
             if (!string.IsNullOrWhiteSpace(path))
             {
-                key.SetValue(ValueName, $""{path}"");
+                key.SetValue(ValueName, """ + path + """);
             }
         }
         else
