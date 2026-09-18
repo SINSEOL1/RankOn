@@ -108,7 +108,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 #root.vertical .main{align-items:center}
 #root.vertical .rankline{justify-content:center}
 #root.vertical .session{margin-left:0;padding-left:0}
-.badge{width:62px;height:62px;display:block;background-image:url('/assets/rank-tiers');background-repeat:no-repeat;background-size:620px 120.28px;background-position-y:-29px}
+.badge{width:62px;height:62px;display:block;background-image:url('/assets/rank-tiers');background-repeat:no-repeat;background-size:738.1px 143.19px;background-position-y:-40.48px}
 .main{display:flex;flex-direction:column;gap:4px}
 .name{font-size:15px;font-weight:700}
 .rankline{display:flex;align-items:baseline;gap:8px}
@@ -160,7 +160,7 @@ async function refresh(){
     const badge=get('badge');
     const tierIndex=tierIndexes[state.tierKey];
     if(Number.isInteger(tierIndex)){
-      badge.style.backgroundPositionX=(-tierIndex*62)+'px';
+      badge.style.backgroundPositionX=(-(tierIndex*73.81+5.9))+'px';
       show('badge',true);
     }else{
       show('badge',false);
