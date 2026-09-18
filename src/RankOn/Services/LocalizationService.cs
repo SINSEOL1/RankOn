@@ -115,7 +115,14 @@ public sealed class LocalizationService
         ["프로필을 불러오지 못했습니다. 잠시 후 다시 시도해주세요."] = ["Could not load the profile. Try again shortly.", "プロフィールを読み込めませんでした。しばらくしてから再試行してください。", "无法加载资料，请稍后重试。"],
         ["현재 최신 버전입니다."] = ["You are up to date.", "最新バージョンです。", "当前已是最新版本。"],
         ["업데이트를 확인하는 중입니다."] = ["Checking for updates.", "更新を確認中です。", "正在检查更新。"],
-        ["업데이트 정보를 확인하지 못했습니다."] = ["Could not check for updates.", "更新情報を確認できませんでした。", "无法检查更新信息。"]
+        ["업데이트 정보를 확인하지 못했습니다."] = ["Could not check for updates.", "更新情報を確認できませんでした。", "无法检查更新信息。"],
+        ["랭크온 열기"] = ["Open RankOn", "RankOnを開く", "打开 RankOn"],
+        ["PC 오버레이 표시/숨기기"] = ["Show/hide PC overlay", "PCオーバーレイ表示/非表示", "显示/隐藏 PC 悬浮层"],
+        ["종료"] = ["Exit", "終了", "退出"],
+        ["현재 시즌 랭크 정보를 찾지 못했습니다."] = ["Current season rank data was not found.", "現在シーズンのランク情報が見つかりません。", "未找到当前赛季排名数据。"],
+        ["닉네임은 등록했지만 현재 시즌 랭크 정보를 찾지 못했습니다."] = ["Profile registered, but current season rank data was not found.", "プロフィールは登録されましたが、現在シーズンのランク情報がありません。", "资料已注册，但未找到当前赛季排名数据。"],
+        ["랭크 정보 요청 시간이 초과되었습니다."] = ["Rank request timed out.", "ランク情報の取得がタイムアウトしました。", "排名数据请求超时。"],
+        ["랭크 정보를 불러오지 못했습니다."] = ["Could not load rank data.", "ランク情報を読み込めませんでした。", "无法加载排名数据。"]
     };
 
     private static readonly Dictionary<string, string[]> Tiers = new()
