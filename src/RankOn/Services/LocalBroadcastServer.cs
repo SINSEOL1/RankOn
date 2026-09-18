@@ -150,7 +150,8 @@ async function refresh(){
     root.style.background=state.backgroundEnabled?'rgba(16,18,24,'+state.backgroundOpacity+')':'transparent';
     root.style.border=state.backgroundEnabled?'1px solid rgba(255,255,255,.10)':'0';
     root.style.borderRadius=state.cornerRadius+'px';
-    root.style.transform='scale('+state.fontScale+')';
+    root.style.transform='none';
+    root.style.zoom=String(1.6*state.fontScale);
     get('name').textContent=state.nickname;
     get('tier').textContent=state.tier;
     get('rp').textContent=state.rp.toLocaleString()+' RP';

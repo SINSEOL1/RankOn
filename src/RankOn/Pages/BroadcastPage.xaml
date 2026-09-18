@@ -23,7 +23,7 @@
                         <Button Grid.Column="1" Content="복사" Margin="8,0,0,0" Click="CopyAddress_Click" Style="{StaticResource SecondaryButtonStyle}"/>
                         <Button Grid.Column="2" Content="미리보기" Margin="8,0,0,0" Click="OpenPreview_Click" Style="{StaticResource SecondaryButtonStyle}"/>
                     </Grid>
-                    <TextBlock Text="권장 크기 600 × 180 · 투명 배경" Margin="0,12,0,0" Foreground="{DynamicResource SecondaryTextBrush}"/>
+                    <TextBlock Text="권장 크기 1200 × 720 · 투명 배경" Margin="0,12,0,0" Foreground="{DynamicResource SecondaryTextBrush}"/>
                 </StackPanel>
             </Border>
             <Border Margin="0,18,0,0" Padding="22" Background="{DynamicResource SurfaceBrush}" CornerRadius="12">
@@ -31,7 +31,7 @@
                     <TextBlock Text="OBS 등록 방법" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
                     <TextBlock Text="1. OBS에서 브라우저 소스를 추가합니다." Margin="0,16,0,0" Foreground="{DynamicResource PrimaryTextBrush}"/>
                     <TextBlock Text="2. 위 주소를 URL에 입력합니다." Margin="0,8,0,0" Foreground="{DynamicResource PrimaryTextBrush}"/>
-                    <TextBlock Text="3. 너비 600, 높이 180으로 설정합니다." Margin="0,8,0,0" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                    <TextBlock Text="3. 너비 1200, 높이 720으로 설정합니다." Margin="0,8,0,0" Foreground="{DynamicResource PrimaryTextBrush}"/>
                     <TextBlock Text="PC 오버레이와 방송 출력은 서로 독립적으로 켜고 끌 수 있습니다." Margin="0,16,0,0" Foreground="{DynamicResource SecondaryTextBrush}"/>
                 </StackPanel>
             </Border>
