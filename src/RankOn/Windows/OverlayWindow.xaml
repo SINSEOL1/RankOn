@@ -10,7 +10,9 @@
         ShowInTaskbar="True"
         WindowStartupLocation="Manual">
     <Grid>
-        <Border x:Name="RootBorder"
+        <Border x:Name="ScaleContainer"
+                Background="Transparent">
+            <Border x:Name="RootBorder"
                 Padding="16,13"
                 Background="#E6101218"
                 BorderBrush="#20FFFFFF"
@@ -89,6 +91,7 @@
                            FontSize="11"
                            Visibility="Collapsed"/>
             </StackPanel>
+            </Border>
         </Border>
     </Grid>
 </Window>
