@@ -122,7 +122,8 @@ public partial class HomePage : UserControl
         TierText.Text = App.LocalizationService.Tier(snapshot.TierKey, snapshot.Division);
         RpText.Text = $"{snapshot.Rp:N0} RP";
         RankText.Text = snapshot.Rank > 0 ? $"#{snapshot.Rank:N0}" : "순위 없음";
-        RankBadgeText.Text = GetBadgeText(snapshot.TierKey);
+        RankIconImage.Source = TierIconService.GetImage(snapshot.TierKey);
+        RankIconContainer.Visibility = RankIconImage.Source is null ? Visibility.Collapsed : Visibility.Visible;
         SeasonText.Text = App.LocalizationService.SeasonRemaining(snapshot.SeasonEnd);
         CutText.Text = App.LocalizationService.Target(
             RankTargetDisplayService.GetText(snapshot, App.SettingsService.Current.TargetRpDisplayMode));
@@ -146,13 +147,6 @@ public partial class HomePage : UserControl
             ? (Brush)FindResource("PositiveBrush")
             : (Brush)FindResource("MutedTextBrush");
     }
-
-    private static string GetBadgeText(string tierKey) => tierKey switch
-    {
-        "eternity" => "ET", "demigod" => "DG", "mythril" => "MI",
-        "meteorite" => "ME", "diamond" => "DI", "platinum" => "PL",
-        "gold" => "GO", "silver" => "SI", "bronze" => "BR", _ => "IR"
-    };
 
     private static string FormatSeasonRemaining(DateTimeOffset? seasonEnd)
     {
