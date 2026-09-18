@@ -6,14 +6,13 @@ namespace RankOn.Services;
 
 public sealed class RankApiService : IDisposable
 {
-    private const string BaseUrl = "https://er-companion-proxy.vercel.app/rankon/";
+    private const string Endpoint = "https://er-companion-proxy.vercel.app/api/rankon";
     private readonly HttpClient _httpClient;
 
     public RankApiService()
     {
         _httpClient = new HttpClient
         {
-            BaseAddress = new Uri(BaseUrl),
             Timeout = TimeSpan.FromSeconds(12)
         };
 
@@ -25,7 +24,7 @@ public sealed class RankApiService : IDisposable
         CancellationToken cancellationToken = default)
     {
         var response = await GetAsync<RankApiResponse>(
-            $"profile?nickname={Uri.EscapeDataString(nickname.Trim())}",
+            $"?action=profile&nickname={Uri.EscapeDataString(nickname.Trim())}",
             cancellationToken);
 
         var profile = new PlayerProfile
@@ -42,15 +41,15 @@ public sealed class RankApiService : IDisposable
         CancellationToken cancellationToken = default)
     {
         var response = await GetAsync<RankApiResponse>(
-            $"rank?uid={Uri.EscapeDataString(uid)}",
+            $"?action=rank&uid={Uri.EscapeDataString(uid)}",
             cancellationToken);
 
         return response.ToSnapshot();
     }
 
-    private async Task<T> GetAsync<T>(string path, CancellationToken cancellationToken)
+    private async Task<T> GetAsync<T>(string query, CancellationToken cancellationToken)
     {
-        using var response = await _httpClient.GetAsync(path, cancellationToken);
+        using var response = await _httpClient.GetAsync(Endpoint + query, cancellationToken);
 
         if (!response.IsSuccessStatusCode)
         {
