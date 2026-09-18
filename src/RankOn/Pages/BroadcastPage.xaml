@@ -1,0 +1,50 @@
+<UserControl x:Class="RankOn.Pages.BroadcastPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="28">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="18"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Padding="22" Background="{DynamicResource SurfaceBrush}" CornerRadius="12">
+            <StackPanel>
+                <TextBlock Text="OBS Browser Source" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                <TextBlock x:Name="ServerStatusText" Margin="0,7,0,0" Foreground="{DynamicResource PositiveBrush}"/>
+                <TextBlock Text="주소" Margin="0,22,0,7" Foreground="{DynamicResource MutedTextBrush}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Border Padding="12,10"
+                            Background="{DynamicResource SurfaceStrongBrush}"
+                            CornerRadius="8">
+                        <TextBlock x:Name="AddressText" VerticalAlignment="Center" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                    </Border>
+                    <Button Grid.Column="1"
+                            Content="복사"
+                            Margin="8,0,0,0"
+                            Click="CopyAddress_Click"
+                            Style="{StaticResource SecondaryButtonStyle}"/>
+                </Grid>
+                <TextBlock Text="권장 크기 600 × 180"
+                           Margin="0,12,0,0"
+                           Foreground="{DynamicResource SecondaryTextBrush}"/>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="2" Padding="22" Background="{DynamicResource SurfaceBrush}" CornerRadius="12">
+            <StackPanel>
+                <TextBlock Text="OBS 등록 방법" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                <TextBlock Text="1. OBS에서 브라우저 소스를 추가합니다." Margin="0,16,0,0" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                <TextBlock Text="2. 위 주소를 URL에 입력합니다." Margin="0,8,0,0" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                <TextBlock Text="3. 너비 600, 높이 180으로 설정합니다." Margin="0,8,0,0" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                <TextBlock Text="PC 오버레이를 꺼도 방송 출력은 별도로 유지됩니다."
+                           Margin="0,16,0,0"
+                           Foreground="{DynamicResource SecondaryTextBrush}"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>
