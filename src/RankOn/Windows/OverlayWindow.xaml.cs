@@ -51,7 +51,7 @@ public partial class OverlayWindow : Window
             : Visibility.Collapsed;
 
         var vertical = string.Equals(state.Preset, "Vertical", StringComparison.OrdinalIgnoreCase);
-        ContentPanel.Orientation = vertical ? Orientation.Vertical : Orientation.Horizontal;
+        ContentPanel.Orientation = vertical ? System.Windows.Controls.Orientation.Vertical : System.Windows.Controls.Orientation.Horizontal;
         ContentPanel.HorizontalAlignment = vertical ? HorizontalAlignment.Center : HorizontalAlignment.Left;
         BadgeBorder.Margin = vertical ? new Thickness(0, 0, 0, 10) : new Thickness(0, 0, 14, 0);
         InfoPanel.HorizontalAlignment = vertical ? HorizontalAlignment.Center : HorizontalAlignment.Left;
@@ -71,7 +71,7 @@ public partial class OverlayWindow : Window
 
         RootBorder.Background = new SolidColorBrush(Color.FromArgb(backgroundAlpha, 16, 18, 24));
         RootBorder.BorderBrush = state.BackgroundEnabled
-            ? new SolidColorBrush(Color.FromArgb((byte)Math.Min(90, backgroundAlpha), 255, 255, 255))
+            ? new SolidColorBrush(Color.FromArgb((byte)Math.Min(90, (int)backgroundAlpha), 255, 255, 255))
             : Brushes.Transparent;
 
         BadgeBorder.Background = new SolidColorBrush(GetTierColor(state.TierKey));
