@@ -1,5 +1,6 @@
 using System.IO;
 using System.Net.Http;
+using System.Windows.Resources;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -117,9 +118,9 @@ public static class TierIconService
             }
 
             var cachePath = GetCachePath();
-            byte[]? bytes = null;
+            var bytes = TryReadBundledSprite();
 
-            if (File.Exists(cachePath))
+            if (bytes is null && File.Exists(cachePath))
             {
                 try
                 {
@@ -161,6 +162,29 @@ public static class TierIconService
         }
     }
 
+    private static byte[]? TryReadBundledSprite()
+    {
+        try
+        {
+            StreamResourceInfo? resource = System.Windows.Application.GetResourceStream(
+                new Uri("pack://application:,,,/Resources/rank-tiers.png", UriKind.Absolute));
+
+            if (resource?.Stream is null)
+            {
+                return null;
+            }
+
+            using var stream = resource.Stream;
+            using var memory = new MemoryStream();
+            stream.CopyTo(memory);
+            return memory.ToArray();
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     private static string GetCachePath()
     {
         var root = Path.Combine(
@@ -178,7 +202,7 @@ public static class TierIconService
             Timeout = TimeSpan.FromSeconds(8)
         };
 
-        client.DefaultRequestHeaders.UserAgent.ParseAdd("RankOn/0.9");
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("RankOn/1.0");
         return client;
     }
 }
