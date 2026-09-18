@@ -15,4 +15,6 @@ public sealed class AppSettings
     public double PcOverlayOpacity { get; set; } = 1.0;
     public string OverlayHotkey { get; set; } = "Ctrl+Shift+R";
     public int RankRefreshSeconds { get; set; } = 60;
+    public int? SessionStartRp { get; set; }
+    public DateTimeOffset? SessionStartedAt { get; set; }
 }

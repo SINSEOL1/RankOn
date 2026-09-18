@@ -8,7 +8,9 @@
         MinHeight="640"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource WindowBackgroundBrush}"
-        Foreground="{DynamicResource PrimaryTextBrush}">
+        Foreground="{DynamicResource PrimaryTextBrush}"
+        Loaded="Window_Loaded"
+        Closed="Window_Closed">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
@@ -27,8 +29,14 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Margin="20,22,16,0">
-                    <TextBlock Text="랭크온" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource PrimaryTextBrush}"/>
-                    <TextBlock Text="RankOn" Margin="0,3,0,0" FontSize="12" Foreground="{DynamicResource MutedTextBrush}"/>
+                    <TextBlock Text="랭크온"
+                               FontSize="22"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource PrimaryTextBrush}"/>
+                    <TextBlock Text="RankOn"
+                               Margin="0,3,0,0"
+                               FontSize="12"
+                               Foreground="{DynamicResource MutedTextBrush}"/>
                 </StackPanel>
 
                 <StackPanel Grid.Row="1">
@@ -42,10 +50,18 @@
                     <Button Style="{StaticResource NavButtonStyle}" Content="정보" Tag="About" Click="NavigationButton_Click"/>
                 </StackPanel>
 
-                <Border Grid.Row="2" Margin="16" Padding="12" Background="{DynamicResource SurfaceBrush}" CornerRadius="8">
+                <Border Grid.Row="2"
+                        Margin="16"
+                        Padding="12"
+                        Background="{DynamicResource SurfaceBrush}"
+                        CornerRadius="8">
                     <StackPanel>
-                        <TextBlock Text="프로필 미등록" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
-                        <TextBlock Text="닉네임을 등록해 시작하세요"
+                        <TextBlock x:Name="SidebarNicknameText"
+                                   Text="프로필 미등록"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource PrimaryTextBrush}"/>
+                        <TextBlock x:Name="SidebarRankText"
+                                   Text="닉네임을 등록해 시작하세요"
                                    Margin="0,3,0,0"
                                    FontSize="11"
                                    Foreground="{DynamicResource MutedTextBrush}"/>
