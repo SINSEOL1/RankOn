@@ -15,6 +15,9 @@ public sealed class RankSnapshot
     public int? Division { get; init; }
     public int? DemigodCutRp { get; init; }
     public int? EternityCutRp { get; init; }
+    public string? NextTierName { get; init; }
+    public int? NextTierRp { get; init; }
+    public int? NextTierRemainingRp { get; init; }
     public string? NextCutTierName { get; init; }
     public int? NextCutRp { get; init; }
     public int? NextCutRemainingRp { get; init; }
