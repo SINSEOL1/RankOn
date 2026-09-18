@@ -15,6 +15,7 @@ public partial class DesignPage : UserControl
 
     private void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
+        App.LocalizationService.ApplyTo(this);
         LoadControls();
         _loaded = true;
         UpdatePreview();
@@ -143,8 +144,8 @@ public partial class DesignPage : UserControl
 
         PreviewTarget.Text = s.TargetRpDisplayMode switch
         {
-            "Demigod" => "데미갓까지 240 RP",
-            "Eternity" => "이터니티까지 420 RP",
+            "Demigod" => App.LocalizationService.Target("데미갓까지 240 RP"),
+            "Eternity" => App.LocalizationService.Target("이터니티까지 420 RP"),
             _ => ""
         };
         PreviewTarget.Visibility = BoolVisibility(s.OverlayShowTarget && !string.IsNullOrWhiteSpace(PreviewTarget.Text));
