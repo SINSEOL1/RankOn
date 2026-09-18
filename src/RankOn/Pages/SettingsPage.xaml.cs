@@ -66,6 +66,10 @@ public partial class SettingsPage : UserControl
         App.LocalizationService.Apply(language);
         await App.SettingsService.SaveAsync(s);
 
+        App.RankPollingService.RebuildOverlayState();
+        App.PcOverlayService.ApplySettings();
+        App.TrayService.RefreshLanguage();
+
         if (System.Windows.Application.Current.MainWindow is MainWindow mainWindow)
         {
             mainWindow.RefreshLocalization();
