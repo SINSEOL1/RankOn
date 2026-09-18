@@ -7,7 +7,8 @@ public sealed record OverlayState(
     int Rp,
     int Rank,
     int SessionDelta,
-    string SeasonRemaining)
+    string SeasonRemaining,
+    string TargetRpText)
 {
-    public static OverlayState Empty { get; } = new(false, "", "", 0, 0, 0, "");
+    public static OverlayState Empty { get; } = new(false, "", "", 0, 0, 0, "", "");
 }
