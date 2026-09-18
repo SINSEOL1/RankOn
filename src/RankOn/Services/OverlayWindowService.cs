@@ -128,6 +128,7 @@ public sealed class OverlayWindowService : IDisposable
         }
 
         _window = new OverlayWindow();
+        App.LocalizationService.ApplyTo(_window);
         _window.PositionCommitted += async (_, _) => await SavePositionAsync();
 
         var settings = _settingsService.Current;
