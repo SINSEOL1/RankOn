@@ -15,6 +15,7 @@ public partial class OverlayPage : UserControl
     private void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
         App.PcOverlayService.Changed += PcOverlayService_Changed;
+        App.LocalizationService.ApplyTo(this);
         LoadSettings();
         _loaded = true;
     }
@@ -99,7 +100,9 @@ public partial class OverlayPage : UserControl
         OpacityValueText.Text = $"{settings.PcOverlayOpacity * 100:0}%";
         PositionText.Text = settings.PcOverlayX is double x && settings.PcOverlayY is double y
             ? $"X {x:0} · Y {y:0}"
-            : "기본 위치";
-        PositionModeButton.Content = App.PcOverlayService.IsPositionMode ? "위치 조정 완료" : "위치 조정";
+            : App.LocalizationService.T("기본 위치");
+        PositionModeButton.Content = App.PcOverlayService.IsPositionMode
+            ? App.LocalizationService.T("위치 조정 완료")
+            : App.LocalizationService.T("위치 조정");
     }
 }
