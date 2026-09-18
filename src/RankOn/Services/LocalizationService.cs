@@ -199,6 +199,68 @@ public sealed class LocalizationService
         };
     }
 
+    public string StartingRp(int? rp)
+    {
+        if (rp is null)
+        {
+            return Current switch
+            {
+                "en-US" => "Starting RP —",
+                "ja-JP" => "開始RP —",
+                "zh-CN" => "起始 RP —",
+                _ => "시작 RP —"
+            };
+        }
+
+        return Current switch
+        {
+            "en-US" => $"Starting RP {rp:N0}",
+            "ja-JP" => $"開始RP {rp:N0}",
+            "zh-CN" => $"起始 RP {rp:N0}",
+            _ => $"시작 RP {rp:N0}"
+        };
+    }
+
+    public string RefreshCooldown(double seconds)
+    {
+        var value = Math.Max(1, Math.Ceiling(seconds));
+        return Current switch
+        {
+            "en-US" => $"{value:0}s",
+            "ja-JP" => $"{value:0}秒後",
+            "zh-CN" => $"{value:0}秒后",
+            _ => $"{value:0}초 후"
+        };
+    }
+
+    public string Position(double x, double y)
+    {
+        return $"X {x:0} · Y {y:0}";
+    }
+
+    public string CurrentRpDelta(int delta)
+    {
+        var signed = $"{(delta > 0 ? "+" : "")}{delta:N0} RP";
+        return Current switch
+        {
+            "en-US" => $"From current RP: {signed}",
+            "ja-JP" => $"現在RP基準 {signed}",
+            "zh-CN" => $"以当前 RP 为基准 {signed}",
+            _ => $"현재 RP 기준 {signed}"
+        };
+    }
+
+    public string NewVersion(string version)
+    {
+        return Current switch
+        {
+            "en-US" => $"New version {version} is available.",
+            "ja-JP" => $"新しいバージョン {version} があります。",
+            "zh-CN" => $"发现新版本 {version}。",
+            _ => $"새 버전 {version}이 있습니다."
+        };
+    }
+
     public string Target(string koreanText)
     {
         if (Current == "ko-KR" || string.IsNullOrWhiteSpace(koreanText)) return koreanText;
