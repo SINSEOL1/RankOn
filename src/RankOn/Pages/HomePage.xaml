@@ -1,0 +1,62 @@
+<UserControl x:Class="RankOn.Pages.HomePage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="28">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="18"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="18"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Padding="22" Background="{DynamicResource SurfaceBrush}" CornerRadius="12">
+                <StackPanel>
+                    <TextBlock Text="현재 랭크" FontSize="13" Foreground="{DynamicResource MutedTextBrush}"/>
+                    <TextBlock Text="프로필을 등록해주세요" Margin="0,18,0,0" FontSize="21" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                    <TextBlock Text="닉네임을 등록하면 티어, RP, 순위와 시즌 정보를 표시합니다."
+                               Margin="0,7,0,0"
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource SecondaryTextBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="2" Padding="22" Background="{DynamicResource SurfaceBrush}" CornerRadius="12">
+                <StackPanel>
+                    <TextBlock Text="이번 세션" FontSize="13" Foreground="{DynamicResource MutedTextBrush}"/>
+                    <TextBlock Text="0 RP" Margin="0,14,0,0" FontSize="32" FontWeight="Bold" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                        <Button Content="새 세션" Style="{StaticResource PrimaryButtonStyle}"/>
+                        <Button Content="직접 입력" Margin="8,0,0,0" Style="{StaticResource SecondaryButtonStyle}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Row="2" Grid.ColumnSpan="3"
+                    Padding="22"
+                    Background="{DynamicResource SurfaceBrush}"
+                    CornerRadius="12">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="PC 오버레이" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                        <TextBlock Text="ON" Margin="0,5,0,0" Foreground="{DynamicResource PositiveBrush}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="방송 출력" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                        <TextBlock Text="ON" Margin="0,5,0,0" Foreground="{DynamicResource PositiveBrush}"/>
+                    </StackPanel>
+                    <Button Grid.Column="2" Content="새로고침" Style="{StaticResource SecondaryButtonStyle}"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</UserControl>
