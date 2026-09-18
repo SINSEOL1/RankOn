@@ -63,8 +63,7 @@ public partial class OverlayWindow : Window
         TargetText.TextAlignment = vertical ? TextAlignment.Center : TextAlignment.Left;
         SessionText.Margin = vertical ? new Thickness(0, 10, 0, 0) : new Thickness(20, 0, 0, 0);
 
-        var scale = Math.Clamp(state.FontScale, 0.7, 1.6);
-        RootBorder.LayoutTransform = new ScaleTransform(scale, scale);
+        RootBorder.LayoutTransform = Transform.Identity;
         RootBorder.CornerRadius = new CornerRadius(Math.Clamp(state.CornerRadius, 0, 40));
 
         var backgroundAlpha = state.BackgroundEnabled

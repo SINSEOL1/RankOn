@@ -41,7 +41,7 @@
                     <CheckBox x:Name="ClickThroughCheckBox" Content="클릭 통과" Checked="WindowOption_Changed" Unchecked="WindowOption_Changed"/>
                     <CheckBox x:Name="LockCheckBox" Content="오버레이 잠금" Checked="WindowOption_Changed" Unchecked="WindowOption_Changed"/>
                     <TextBlock Text="표시/숨기기 단축키  Ctrl + Shift + R" Margin="0,16,0,0" Foreground="{DynamicResource MutedTextBrush}"/>
-                    <TextBlock Text="작업표시줄과 Alt+Tab에는 일반 창처럼 표시됩니다." Margin="0,5,0,0" Foreground="{DynamicResource MutedTextBrush}"/>
+                    <TextBlock Text="PC 오버레이는 작업표시줄과 Alt+Tab에 표시되지 않습니다." Margin="0,5,0,0" Foreground="{DynamicResource MutedTextBrush}"/>
                 </StackPanel>
             </Border>
         </StackPanel>
