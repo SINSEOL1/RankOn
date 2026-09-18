@@ -64,12 +64,29 @@ public sealed class RankPollingService : IAsyncDisposable
             IsRefreshing = true;
             Changed?.Invoke(this, EventArgs.Empty);
 
-            var result = await _apiService.ResolveAsync(nickname);
-            CurrentProfile = result.Profile;
-            await _profileService.SaveAsync(result.Profile);
-            await _sessionService.StartFromCurrentAsync(result.Snapshot.Rp);
-            ApplySnapshot(result.Snapshot);
-            LastError = null;
+            var profile = await _apiService.ResolveProfileAsync(nickname);
+            CurrentProfile = profile;
+            await _profileService.SaveAsync(profile);
+
+            try
+            {
+                var snapshot = await _apiService.GetRankAsync(profile.Uid);
+
+                if (_sessionService.Current.StartRp is null)
+                {
+                    await _sessionService.StartFromCurrentAsync(snapshot.Rp);
+                }
+
+                ApplySnapshot(snapshot);
+                LastError = null;
+            }
+            catch (HttpRequestException ex) when (
+                ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                Current = null;
+                LastError = "닉네임은 등록했지만 현재 시즌 랭크 정보를 찾지 못했습니다.";
+                _overlayStateService.Set(OverlayState.Empty);
+            }
         }
         finally
         {
