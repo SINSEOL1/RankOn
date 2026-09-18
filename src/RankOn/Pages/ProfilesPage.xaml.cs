@@ -53,7 +53,7 @@ public partial class ProfilesPage : UserControl
         catch (HttpRequestException ex) when (
             ex.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
-            RegistrationStatusText.Text = "닉네임 또는 현재 시즌 랭크 정보를 찾지 못했습니다.";
+            RegistrationStatusText.Text = "입력한 닉네임을 찾지 못했습니다.";
         }
         catch
         {
@@ -81,7 +81,7 @@ public partial class ProfilesPage : UserControl
         CurrentNicknameText.Text = profile.Nickname;
 
         CurrentRankText.Text = snapshot is null
-            ? "랭크 정보를 불러오는 중입니다."
+            ? App.RankPollingService.LastError ?? "랭크 정보를 불러오는 중입니다."
             : $"{snapshot.TierDisplayName} · {snapshot.Rp:N0} RP · #{snapshot.Rank:N0}";
     }
 }
