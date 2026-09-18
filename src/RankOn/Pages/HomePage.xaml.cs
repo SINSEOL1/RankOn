@@ -92,37 +92,40 @@ public partial class HomePage : UserControl
 
         RefreshButton.IsEnabled = canRefresh;
         RefreshButton.Content = service.IsRefreshing
-            ? "불러오는 중..."
+            ? App.LocalizationService.T("불러오는 중...")
             : cooldown > TimeSpan.Zero
-                ? $"{Math.Ceiling(cooldown.TotalSeconds):0}초 후"
-                : "새로고침";
+                ? App.LocalizationService.RefreshCooldown(cooldown.TotalSeconds)
+                : App.LocalizationService.T("새로고침");
 
         SetStatus(PcOverlayStatusText, App.PcOverlayService.IsVisible);
         SetStatus(BroadcastStatusText, App.BroadcastServer.IsRunning);
 
         if (snapshot is null)
         {
-            NicknameText.Text = profile?.Nickname ?? "프로필을 등록해주세요";
+            NicknameText.Text = profile?.Nickname ?? App.LocalizationService.T("프로필을 등록해주세요.");
             TierText.Text = profile is null
-                ? "프로필 페이지에서 닉네임을 등록하면 시작됩니다."
-                : "랭크 정보를 불러오는 중입니다.";
+                ? App.LocalizationService.T("프로필 페이지에서 닉네임을 등록하면 시작됩니다.")
+                : App.LocalizationService.T("랭크 정보를 불러오는 중입니다.");
             RpText.Text = "— RP";
             RankText.Text = "—";
             SeasonText.Text = "";
             CutText.Text = "";
             SessionDeltaText.Text = "0 RP";
-            SessionStartText.Text = App.SessionService.Current.StartRp is int start ? $"시작 RP {start:N0}" : "시작 RP —";
-            StatusText.Text = service.LastError ?? "프로필을 등록해주세요.";
+            SessionStartText.Text = App.LocalizationService.StartingRp(App.SessionService.Current.StartRp);
+            StatusText.Text = service.LastError is null
+                ? App.LocalizationService.T("프로필을 등록해주세요.")
+                : App.LocalizationService.T(service.LastError);
             return;
         }
 
         NicknameText.Text = snapshot.Nickname;
-        TierText.Text = snapshot.TierDisplayName;
+        TierText.Text = App.LocalizationService.Tier(snapshot.TierKey, snapshot.Division);
         RpText.Text = $"{snapshot.Rp:N0} RP";
         RankText.Text = snapshot.Rank > 0 ? $"#{snapshot.Rank:N0}" : "순위 없음";
         RankBadgeText.Text = GetBadgeText(snapshot.TierKey);
-        SeasonText.Text = FormatSeasonRemaining(snapshot.SeasonEnd);
-        CutText.Text = RankTargetDisplayService.GetText(snapshot, App.SettingsService.Current.TargetRpDisplayMode);
+        SeasonText.Text = App.LocalizationService.SeasonRemaining(snapshot.SeasonEnd);
+        CutText.Text = App.LocalizationService.Target(
+            RankTargetDisplayService.GetText(snapshot, App.SettingsService.Current.TargetRpDisplayMode));
 
         var delta = App.SessionService.GetDelta(snapshot.Rp);
         SessionDeltaText.Text = $"{(delta > 0 ? "+" : "")}{delta:N0} RP";
@@ -130,8 +133,10 @@ public partial class HomePage : UserControl
             ? (Brush)FindResource("PositiveBrush")
             : (Brush)FindResource("NegativeBrush");
 
-        SessionStartText.Text = App.SessionService.Current.StartRp is int startRp ? $"시작 RP {startRp:N0}" : "시작 RP —";
-        StatusText.Text = service.LastError ?? "자동 갱신 60초";
+        SessionStartText.Text = App.LocalizationService.StartingRp(App.SessionService.Current.StartRp);
+        StatusText.Text = service.LastError is null
+            ? App.LocalizationService.T("자동 갱신 60초")
+            : App.LocalizationService.T(service.LastError);
     }
 
     private void SetStatus(TextBlock text, bool enabled)
