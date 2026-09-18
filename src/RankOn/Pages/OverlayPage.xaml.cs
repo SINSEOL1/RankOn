@@ -64,9 +64,7 @@ public partial class OverlayPage : UserControl
 
         var settings = App.SettingsService.Current;
         settings.PcOverlayScale = ScaleSlider.Value / 100.0;
-        settings.OverlayFontScale = settings.PcOverlayScale;
         await App.SettingsService.SaveAsync(settings);
-        App.RankPollingService.RebuildOverlayState();
         App.PcOverlayService.ApplySettings();
         UpdatePositionView();
     }
