@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using RankOn.Dialogs;
+using RankOn.Services;
 
 namespace RankOn.Pages;
 
@@ -119,10 +120,9 @@ public partial class HomePage : UserControl
         RankBadgeText.Text = GetBadgeText(snapshot.TierKey);
         SeasonText.Text = FormatSeasonRemaining(snapshot.SeasonEnd);
 
-        CutText.Text = snapshot.NextCutRemainingRp is int remaining &&
-                       !string.IsNullOrWhiteSpace(snapshot.NextCutTierName)
-            ? $"{snapshot.NextCutTierName}까지 {remaining:N0} RP"
-            : "";
+        CutText.Text = RankTargetDisplayService.GetText(
+            snapshot,
+            App.SettingsService.Current.TargetRpDisplayMode);
 
         var delta = App.SessionService.GetDelta(snapshot.Rp);
         SessionDeltaText.Text = $"{(delta > 0 ? "+" : "")}{delta:N0} RP";
@@ -134,8 +134,7 @@ public partial class HomePage : UserControl
             ? $"시작 RP {startRp:N0}"
             : "시작 RP —";
 
-        StatusText.Text = service.LastError ??
-            $"자동 갱신 60초 · 시즌 {snapshot.SeasonId}";
+        StatusText.Text = service.LastError ?? "자동 갱신 60초";
     }
 
     private static string GetBadgeText(string tierKey)

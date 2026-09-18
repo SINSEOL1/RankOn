@@ -73,6 +73,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 .rankline{display:flex;align-items:baseline;gap:8px}
 .tier{font-size:18px;font-weight:700}
 .rp,.place,.season{font-size:13px;color:#b9c2d0}
+.target{font-size:12px;color:#7aa2ff}
 .session{margin-left:auto;padding-left:18px;font-size:18px;font-weight:700}
 .positive{color:#70d6a6}
 .negative{color:#ff8e8e}
@@ -89,6 +90,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
       <span class="place" id="place"></span>
     </div>
     <div class="season" id="season"></div>
+    <div class="target" id="target"></div>
   </div>
   <div class="session" id="session"></div>
 </div>
@@ -106,6 +108,9 @@ async function refresh(){
     set('rp',state.rp.toLocaleString()+' RP');
     set('place','#'+state.rank.toLocaleString());
     set('season',state.seasonRemaining);
+    const target=document.getElementById('target');
+    target.textContent=state.targetRpText||'';
+    target.style.display=state.targetRpText?'block':'none';
     const session=document.getElementById('session');
     const delta=state.sessionDelta;
     session.textContent=(delta>0?'+':'')+delta.toLocaleString()+' RP';

@@ -156,6 +156,10 @@ public sealed class RankPollingService : IAsyncDisposable
 
     private void ApplyOverlayState(RankSnapshot snapshot)
     {
+        var targetText = RankTargetDisplayService.GetText(
+            snapshot,
+            _settingsService.Current.TargetRpDisplayMode);
+
         _overlayStateService.Set(new OverlayState(
             true,
             snapshot.Nickname,
@@ -163,7 +167,8 @@ public sealed class RankPollingService : IAsyncDisposable
             snapshot.Rp,
             snapshot.Rank,
             _sessionService.GetDelta(snapshot.Rp),
-            FormatSeasonRemaining(snapshot.SeasonEnd)));
+            FormatSeasonRemaining(snapshot.SeasonEnd),
+            targetText));
     }
 
     private async Task RunLoopAsync(CancellationToken cancellationToken)
