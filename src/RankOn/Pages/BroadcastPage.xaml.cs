@@ -67,7 +67,7 @@ public partial class BroadcastPage : UserControl
             ? App.LocalizationService.T("방송 출력 실행 중")
             : string.IsNullOrWhiteSpace(App.BroadcastServer.LastError)
                 ? App.LocalizationService.T("방송 출력 꺼짐")
-                : App.LocalizationService.T("방송 출력 시작 실패");
+                : $"{App.LocalizationService.T("방송 출력 시작 실패")} · {App.LocalizationService.T(App.BroadcastServer.LastError)}";
         ServerStatusText.Foreground = running
             ? (Brush)FindResource("PositiveBrush")
             : (Brush)FindResource("MutedTextBrush");
