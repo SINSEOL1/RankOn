@@ -18,6 +18,6 @@
 - [x] GitHub Release 업데이트 확인
 - [x] Inno Setup 설치 프로그램
 - [x] v1.0.0 버전 설정
-- [ ] 최종 실사용 스모크 테스트
-- [ ] v1.0.0 태그 생성
-- [ ] GitHub Release 자동 빌드 확인
+- [x] 최종 실사용 스모크 테스트
+- [x] v1.0.0 태그 생성
+- [x] GitHub Release 자동 빌드 확인
