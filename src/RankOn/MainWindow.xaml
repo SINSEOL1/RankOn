@@ -1,0 +1,76 @@
+<Window x:Class="RankOn.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="랭크온"
+        Width="1120"
+        Height="760"
+        MinWidth="960"
+        MinHeight="640"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource WindowBackgroundBrush}"
+        Foreground="{DynamicResource PrimaryTextBrush}">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0"
+                Background="{DynamicResource SidebarBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,0,1,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="96"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="88"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Margin="20,22,16,0">
+                    <TextBlock Text="랭크온" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                    <TextBlock Text="RankOn" Margin="0,3,0,0" FontSize="12" Foreground="{DynamicResource MutedTextBrush}"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1">
+                    <Button Style="{StaticResource NavButtonStyle}" Content="홈" Tag="Home" Click="NavigationButton_Click"/>
+                    <Button Style="{StaticResource NavButtonStyle}" Content="방송 출력" Tag="Broadcast" Click="NavigationButton_Click"/>
+                    <Button Style="{StaticResource NavButtonStyle}" Content="오버레이" Tag="Overlay" Click="NavigationButton_Click"/>
+                    <Button Style="{StaticResource NavButtonStyle}" Content="디자인" Tag="Design" Click="NavigationButton_Click"/>
+                    <Button Style="{StaticResource NavButtonStyle}" Content="프로필" Tag="Profiles" Click="NavigationButton_Click"/>
+                    <Separator Margin="20,12" Background="{DynamicResource BorderBrush}"/>
+                    <Button Style="{StaticResource NavButtonStyle}" Content="설정" Tag="Settings" Click="NavigationButton_Click"/>
+                    <Button Style="{StaticResource NavButtonStyle}" Content="정보" Tag="About" Click="NavigationButton_Click"/>
+                </StackPanel>
+
+                <Border Grid.Row="2" Margin="16" Padding="12" Background="{DynamicResource SurfaceBrush}" CornerRadius="8">
+                    <StackPanel>
+                        <TextBlock Text="프로필 미등록" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                        <TextBlock Text="닉네임을 등록해 시작하세요"
+                                   Margin="0,3,0,0"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource MutedTextBrush}"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="76"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
+                <TextBlock x:Name="PageTitle"
+                           Text="홈"
+                           Margin="28,0"
+                           VerticalAlignment="Center"
+                           FontSize="22"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource PrimaryTextBrush}"/>
+            </Border>
+
+            <ContentControl x:Name="PageContent" Grid.Row="1"/>
+        </Grid>
+    </Grid>
+</Window>
