@@ -1,5 +1,6 @@
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json.Serialization;
 using RankOn.Models;
 
 namespace RankOn.Services;
@@ -19,21 +20,19 @@ public sealed class RankApiService : IDisposable
         _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("RankOn/0.1.0");
     }
 
-    public async Task<(PlayerProfile Profile, RankSnapshot Snapshot)> ResolveAsync(
+    public async Task<PlayerProfile> ResolveProfileAsync(
         string nickname,
         CancellationToken cancellationToken = default)
     {
-        var response = await GetAsync<RankApiResponse>(
-            $"?action=profile&nickname={Uri.EscapeDataString(nickname.Trim())}",
+        var response = await GetAsync<ResolveProfileResponse>(
+            $"?action=resolve&nickname={Uri.EscapeDataString(nickname.Trim())}",
             cancellationToken);
 
-        var profile = new PlayerProfile
+        return new PlayerProfile
         {
             Nickname = response.Nickname,
             Uid = response.Uid
         };
-
-        return (profile, response.ToSnapshot());
     }
 
     public async Task<RankSnapshot> GetRankAsync(
@@ -69,5 +68,14 @@ public sealed class RankApiService : IDisposable
     public void Dispose()
     {
         _httpClient.Dispose();
+    }
+
+    private sealed class ResolveProfileResponse
+    {
+        [JsonPropertyName("uid")]
+        public string Uid { get; set; } = "";
+
+        [JsonPropertyName("nickname")]
+        public string Nickname { get; set; } = "";
     }
 }
