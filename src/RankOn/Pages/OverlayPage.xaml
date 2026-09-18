@@ -1,0 +1,18 @@
+<UserControl x:Class="RankOn.Pages.OverlayPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="28">
+        <Border Padding="22" Background="{DynamicResource SurfaceBrush}" CornerRadius="12">
+            <StackPanel>
+                <TextBlock Text="PC 오버레이" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                <TextBlock Text="방송 출력과 독립적으로 사용자 화면에 랭크 오버레이를 표시합니다."
+                           Margin="0,7,0,0"
+                           Foreground="{DynamicResource SecondaryTextBrush}"/>
+                <TextBlock Text="위치, 크기, 투명도, 항상 위, 클릭 통과와 단축키 설정을 이 페이지에서 관리합니다."
+                           Margin="0,22,0,0"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource MutedTextBrush}"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>
