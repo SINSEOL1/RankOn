@@ -29,24 +29,54 @@ public partial class DesignPage : UserControl
         var s = App.SettingsService.Current;
         s.OverlayPreset = preset;
 
-        switch (preset)
-        {
-            case "Compact":
-                s.OverlayBackgroundEnabled = true; s.OverlayBackgroundOpacity = 0.82; s.OverlayCornerRadius = 10; s.OverlayFontScale = 0.88; s.OverlayShowSeason = false; s.OverlayShowTarget = false; break;
-            case "Minimal":
-                s.OverlayBackgroundEnabled = true; s.OverlayBackgroundOpacity = 0.70; s.OverlayCornerRadius = 10; s.OverlayFontScale = 0.95; s.OverlayShowNickname = false; s.OverlayShowSeason = false; s.OverlayShowTarget = false; break;
-            case "Vertical":
-                s.OverlayBackgroundEnabled = true; s.OverlayBackgroundOpacity = 0.88; s.OverlayCornerRadius = 18; s.OverlayFontScale = 1.0; s.OverlayShowNickname = true; s.OverlayShowSeason = true; s.OverlayShowTarget = true; break;
-            case "StreamBar":
-                s.OverlayBackgroundEnabled = true; s.OverlayBackgroundOpacity = 0.76; s.OverlayCornerRadius = 8; s.OverlayFontScale = 0.9; s.OverlayShowNickname = true; s.OverlayShowSeason = false; s.OverlayShowTarget = true; break;
-            default:
-                s.OverlayBackgroundEnabled = true; s.OverlayBackgroundOpacity = 0.88; s.OverlayCornerRadius = 14; s.OverlayFontScale = 1.0; s.OverlayShowNickname = true; s.OverlayShowSeason = true; s.OverlayShowTarget = true; break;
-        }
-
+        s.OverlayShowNickname = true;
         s.OverlayShowTier = true;
         s.OverlayShowRp = true;
         s.OverlayShowRank = true;
         s.OverlayShowSession = true;
+        s.OverlayShowSeason = true;
+        s.OverlayShowTarget = true;
+
+        switch (preset)
+        {
+            case "Compact":
+                s.OverlayBackgroundEnabled = true;
+                s.OverlayBackgroundOpacity = 0.82;
+                s.OverlayCornerRadius = 10;
+                s.OverlayFontScale = 0.88;
+                s.OverlayShowSeason = false;
+                s.OverlayShowTarget = false;
+                break;
+            case "Minimal":
+                s.OverlayBackgroundEnabled = true;
+                s.OverlayBackgroundOpacity = 0.62;
+                s.OverlayCornerRadius = 10;
+                s.OverlayFontScale = 0.92;
+                s.OverlayShowNickname = false;
+                s.OverlayShowRank = false;
+                s.OverlayShowSeason = false;
+                s.OverlayShowTarget = false;
+                break;
+            case "Vertical":
+                s.OverlayBackgroundEnabled = true;
+                s.OverlayBackgroundOpacity = 0.88;
+                s.OverlayCornerRadius = 18;
+                s.OverlayFontScale = 1.0;
+                break;
+            case "StreamBar":
+                s.OverlayBackgroundEnabled = true;
+                s.OverlayBackgroundOpacity = 0.76;
+                s.OverlayCornerRadius = 8;
+                s.OverlayFontScale = 0.9;
+                s.OverlayShowSeason = false;
+                break;
+            default:
+                s.OverlayBackgroundEnabled = true;
+                s.OverlayBackgroundOpacity = 0.88;
+                s.OverlayCornerRadius = 14;
+                s.OverlayFontScale = 1.0;
+                break;
+        }
 
         LoadControls();
         await SaveApplyAsync();
@@ -61,7 +91,6 @@ public partial class DesignPage : UserControl
         s.OverlayBackgroundOpacity = BackgroundOpacitySlider.Value / 100.0;
         s.OverlayCornerRadius = CornerRadiusSlider.Value;
         s.OverlayFontScale = FontScaleSlider.Value / 100.0;
-        s.PcOverlayScale = s.OverlayFontScale;
         s.OverlayShowNickname = ShowNicknameCheckBox.IsChecked == true;
         s.OverlayShowTier = ShowTierCheckBox.IsChecked == true;
         s.OverlayShowRp = ShowRpCheckBox.IsChecked == true;
