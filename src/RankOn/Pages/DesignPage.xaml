@@ -1,0 +1,45 @@
+<UserControl x:Class="RankOn.Pages.DesignPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="28">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="280"/>
+            <ColumnDefinition Width="18"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Padding="22" Background="{DynamicResource SurfaceBrush}" CornerRadius="12">
+            <StackPanel>
+                <TextBlock Text="프리셋" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                <RadioButton Content="Standard" Margin="0,18,0,0" IsChecked="True" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                <RadioButton Content="Compact" Margin="0,12,0,0" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                <RadioButton Content="Minimal" Margin="0,12,0,0" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                <RadioButton Content="Vertical" Margin="0,12,0,0" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                <RadioButton Content="Stream Bar" Margin="0,12,0,0" Foreground="{DynamicResource PrimaryTextBrush}"/>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Column="2" Padding="22" Background="{DynamicResource SurfaceBrush}" CornerRadius="12">
+            <StackPanel>
+                <TextBlock Text="실시간 미리보기" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                <Border Margin="0,24,0,0"
+                        Padding="18"
+                        HorizontalAlignment="Left"
+                        Background="#E6101218"
+                        CornerRadius="14">
+                    <StackPanel Orientation="Horizontal">
+                        <Border Width="62" Height="62" Background="#22FFFFFF" CornerRadius="12">
+                            <TextBlock Text="RANK" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#B9C2D0"/>
+                        </Border>
+                        <StackPanel Margin="16,0,24,0">
+                            <TextBlock Text="SINSEOL" Foreground="White" FontWeight="Bold"/>
+                            <TextBlock Text="Eternity · 10,420 RP · #184" Margin="0,6,0,0" Foreground="White" FontSize="17" FontWeight="SemiBold"/>
+                            <TextBlock Text="시즌 종료까지 12일" Margin="0,5,0,0" Foreground="#B9C2D0" FontSize="12"/>
+                        </StackPanel>
+                        <TextBlock Text="+382 RP" Foreground="#70D6A6" VerticalAlignment="Center" FontSize="18" FontWeight="Bold"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>
