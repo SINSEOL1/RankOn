@@ -35,12 +35,20 @@ public partial class AboutPage : UserControl
             if (update is null)
             {
                 UpdateStatusText.Text = App.LocalizationService.T("현재 최신 버전입니다.");
+                return;
             }
-            else
+
+            UpdateStatusText.Text = App.LocalizationService.T("새 버전을 다운로드하는 중입니다.");
+
+            var started = await App.UpdateService.DownloadAndInstallAsync(update);
+            if (!started)
             {
-                UpdateStatusText.Text = App.LocalizationService.NewVersion(update.Version);
-                App.UpdateService.Open(update);
+                UpdateStatusText.Text = App.LocalizationService.T("업데이트를 다운로드하지 못했습니다.");
+                return;
             }
+
+            UpdateStatusText.Text = App.LocalizationService.T("업데이트를 설치합니다.");
+            App.ExitApplication();
         }
         catch
         {
