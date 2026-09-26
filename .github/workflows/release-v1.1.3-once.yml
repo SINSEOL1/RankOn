@@ -1,0 +1,79 @@
+name: Publish v1.1.3
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/release-v1.1.3-once.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Download rank tier asset
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "src\RankOn\Resources" | Out-Null
+          curl.exe -L --fail "https://support.playeternalreturn.com/hc/article_attachments/45305347324825" -o "src\RankOn\Resources\rank-tiers.png"
+          if (-not (Test-Path "src\RankOn\Resources\rank-tiers.png")) { throw "rank tier asset download failed" }
+
+      - name: Publish
+        shell: pwsh
+        run: |
+          dotnet publish src/RankOn/RankOn.csproj `
+            --configuration Release `
+            --runtime win-x64 `
+            --self-contained true `
+            -p:Version=1.1.3 `
+            -p:PublishSingleFile=true `
+            -p:IncludeNativeLibrariesForSelfExtract=true `
+            --output publish
+
+      - name: Generate installer icon
+        run: python scripts/generate-installer-icon.py
+
+      - name: Install Inno Setup
+        run: choco install innosetup --no-progress -y
+
+      - name: Build installer
+        shell: pwsh
+        run: |
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DMyAppVersion=1.1.3" "installer\RankOn.iss"
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.1.3
+          target_commitish: ${{ github.sha }}
+          name: RankOn v1.1.3
+          make_latest: true
+          body: |
+            # RankOn v1.1.3
+
+            ## 자동 업데이트 안정화
+            - 자동 업데이트 방식을 오늘의 루미에서 검증된 구조로 변경했습니다.
+            - 새 버전 설치 파일을 직접 다운로드하고 설치 프로그램을 바로 실행하도록 단순화했습니다.
+            - 업데이트 과정에서 사용하던 PowerShell 보조 스크립트를 제거했습니다.
+            - 무인 설치가 끝나면 RankOn이 자동으로 다시 실행되도록 수정했습니다.
+            - 프로그램 정보의 수동 업데이트 확인도 동일한 방식으로 동작합니다.
+
+            > v1.1.1 / v1.1.2에서는 자동 업데이트 기능 자체에 문제가 있어 v1.1.3까지는 한 번 수동 설치가 필요합니다. v1.1.3부터 이후 버전은 자동 업데이트됩니다.
+          files: installer/output/RankOn-Setup-v1.1.3.exe
