@@ -7,21 +7,39 @@ namespace RankOn.Services;
 public sealed class TrayService : IDisposable
 {
     private Forms.NotifyIcon? _icon;
+    private Icon? _appIcon;
     private Window? _window;
 
     public void Initialize(Window window)
     {
         _window = window;
 
+        _appIcon = LoadApplicationIcon();
+
         _icon = new Forms.NotifyIcon
         {
             Text = "RankOn",
-            Icon = SystemIcons.Application,
+            Icon = _appIcon ?? SystemIcons.Application,
             Visible = true
         };
 
         RefreshLanguage();
         _icon.DoubleClick += (_, _) => ShowMainWindow();
+    }
+
+    private static Icon? LoadApplicationIcon()
+    {
+        try
+        {
+            var executablePath = Environment.ProcessPath;
+            return string.IsNullOrWhiteSpace(executablePath)
+                ? null
+                : Icon.ExtractAssociatedIcon(executablePath);
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public void RefreshLanguage()
@@ -60,14 +78,15 @@ public sealed class TrayService : IDisposable
 
     public void Dispose()
     {
-        if (_icon is null)
+        if (_icon is not null)
         {
-            return;
+            _icon.Visible = false;
+            _icon.ContextMenuStrip?.Dispose();
+            _icon.Dispose();
+            _icon = null;
         }
 
-        _icon.Visible = false;
-        _icon.ContextMenuStrip?.Dispose();
-        _icon.Dispose();
-        _icon = null;
+        _appIcon?.Dispose();
+        _appIcon = null;
     }
 }
