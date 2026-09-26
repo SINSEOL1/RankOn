@@ -1,0 +1,78 @@
+name: Publish v1.1.1
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/release-v1.1.1-once.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Download rank tier asset
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "src\RankOn\Resources" | Out-Null
+          curl.exe -L --fail "https://support.playeternalreturn.com/hc/article_attachments/45305347324825" -o "src\RankOn\Resources\rank-tiers.png"
+          if (-not (Test-Path "src\RankOn\Resources\rank-tiers.png")) { throw "rank tier asset download failed" }
+
+      - name: Publish
+        shell: pwsh
+        run: |
+          dotnet publish src/RankOn/RankOn.csproj `
+            --configuration Release `
+            --runtime win-x64 `
+            --self-contained true `
+            -p:Version=1.1.1 `
+            -p:PublishSingleFile=true `
+            -p:IncludeNativeLibrariesForSelfExtract=true `
+            --output publish
+
+      - name: Generate installer icon
+        run: python scripts/generate-installer-icon.py
+
+      - name: Install Inno Setup
+        run: choco install innosetup --no-progress -y
+
+      - name: Build installer
+        shell: pwsh
+        run: |
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DMyAppVersion=1.1.1" "installer\RankOn.iss"
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.1.1
+          target_commitish: ${{ github.sha }}
+          name: RankOn v1.1.1
+          make_latest: true
+          body: |
+            # RankOn v1.1.1
+
+            ## 자동 업데이트 개선
+            - 새 버전이 있으면 GitHub 다운로드 페이지를 열지 않고 설치 파일을 자동으로 다운로드합니다.
+            - 다운로드가 끝나면 랭크온을 종료하고 업데이트를 자동으로 설치합니다.
+            - 설치가 완료되면 랭크온이 자동으로 다시 실행됩니다.
+            - 프로그램 정보의 수동 업데이트 확인도 같은 자동 설치 방식으로 변경했습니다.
+
+            > v1.1.0에서는 기존 업데이트 방식 때문에 v1.1.1 설치까지는 한 번 수동으로 진행해야 합니다. v1.1.1부터 이후 버전은 자동으로 업데이트됩니다.
+          files: installer/output/RankOn-Setup-v1.1.1.exe
