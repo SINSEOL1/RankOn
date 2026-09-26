@@ -10,6 +10,7 @@ public sealed record OverlayState(
     int SessionDelta,
     string SeasonRemaining,
     string TargetRpText,
+    IReadOnlyList<RecentMatchResult> RecentMatches,
     string Preset,
     bool BackgroundEnabled,
     double BackgroundOpacity,
@@ -21,9 +22,10 @@ public sealed record OverlayState(
     bool ShowRank,
     bool ShowSession,
     bool ShowSeason,
-    bool ShowTarget)
+    bool ShowTarget,
+    bool ShowRecentMatches)
 {
     public static OverlayState Empty { get; } = new(
-        false, "", "", "", 0, 0, 0, "", "", "Standard",
-        true, 0.88, 14, 1.0, true, true, true, true, true, true, true);
+        false, "", "", "", 0, 0, 0, "", "", Array.Empty<RecentMatchResult>(), "Standard",
+        true, 0.88, 14, 1.0, true, true, true, true, true, true, true, true);
 }

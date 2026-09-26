@@ -61,6 +61,15 @@ public partial class HomePage : UserControl
         if (snapshot is null) return;
 
         await App.SessionService.StartFromCurrentAsync(snapshot.Rp);
+
+        if (string.Equals(
+            App.SettingsService.Current.RecentMatchesMode,
+            "ProgramStart",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            App.RecentMatchesService.ResetSession();
+        }
+
         App.RankPollingService.RebuildOverlayState();
         UpdateView();
     }
@@ -146,15 +155,5 @@ public partial class HomePage : UserControl
         text.Foreground = enabled
             ? (Brush)FindResource("PositiveBrush")
             : (Brush)FindResource("MutedTextBrush");
-    }
-
-    private static string FormatSeasonRemaining(DateTimeOffset? seasonEnd)
-    {
-        if (seasonEnd is null) return "";
-        var remaining = seasonEnd.Value - DateTimeOffset.Now;
-        if (remaining <= TimeSpan.Zero) return "시즌 종료";
-        return remaining.TotalDays >= 1
-            ? $"시즌 종료까지 {(int)remaining.TotalDays}일 {remaining.Hours}시간"
-            : $"시즌 종료까지 {remaining.Hours}시간 {remaining.Minutes}분";
     }
 }

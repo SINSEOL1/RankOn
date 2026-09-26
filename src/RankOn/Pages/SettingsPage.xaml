@@ -36,6 +36,21 @@
                 <StackPanel>
                     <TextBlock Text="데이터" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
                     <TextBlock Text="자동 랭크 갱신 60초 · 수동 새로고침 쿨다운 10초" Margin="0,12,0,0" Foreground="{DynamicResource SecondaryTextBrush}"/>
+                    <TextBlock Text="최근 전적 기준" Margin="0,18,0,6" Foreground="{DynamicResource SecondaryTextBrush}"/>
+                    <ComboBox x:Name="RecentMatchesModeComboBox"
+                              Width="220"
+                              HorizontalAlignment="Left"
+                              SelectionChanged="RecentMatchesModeComboBox_SelectionChanged">
+                        <ComboBoxItem Content="프로그램 시작 이후" Tag="ProgramStart"/>
+                        <ComboBoxItem Content="최근 10게임" Tag="Latest10"/>
+                    </ComboBox>
+                    <TextBlock Text="프로그램 시작 이후는 실행 직후 비어 있는 상태에서 새 경기만 쌓이며, 새 세션을 시작하면 다시 초기화됩니다."
+                               Width="520"
+                               MaxWidth="520"
+                               Margin="0,8,0,0"
+                               HorizontalAlignment="Left"
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource MutedTextBrush}"/>
                 </StackPanel>
             </Border>
         </StackPanel>

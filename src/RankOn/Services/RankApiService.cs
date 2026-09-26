@@ -46,6 +46,17 @@ public sealed class RankApiService : IDisposable
         return response.ToSnapshot();
     }
 
+    public async Task<IReadOnlyList<RecentMatchResult>> GetRecentMatchesAsync(
+        string uid,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await GetAsync<RecentMatchesResponse>(
+            $"?action=matches&uid={Uri.EscapeDataString(uid)}",
+            cancellationToken);
+
+        return response.Matches;
+    }
+
     private async Task<T> GetAsync<T>(string query, CancellationToken cancellationToken)
     {
         using var response = await _httpClient.GetAsync(Endpoint + query, cancellationToken);

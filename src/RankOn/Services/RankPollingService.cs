@@ -8,6 +8,7 @@ public sealed class RankPollingService : IAsyncDisposable
     private readonly ProfileService _profileService;
     private readonly RankApiService _apiService;
     private readonly SessionService _sessionService;
+    private readonly RecentMatchesService _recentMatchesService;
     private readonly OverlayStateService _overlayStateService;
     private readonly AppSettingsService _settingsService;
     private readonly SemaphoreSlim _refreshGate = new(1, 1);
@@ -18,12 +19,14 @@ public sealed class RankPollingService : IAsyncDisposable
         ProfileService profileService,
         RankApiService apiService,
         SessionService sessionService,
+        RecentMatchesService recentMatchesService,
         OverlayStateService overlayStateService,
         AppSettingsService settingsService)
     {
         _profileService = profileService;
         _apiService = apiService;
         _sessionService = sessionService;
+        _recentMatchesService = recentMatchesService;
         _overlayStateService = overlayStateService;
         _settingsService = settingsService;
     }
@@ -39,6 +42,7 @@ public sealed class RankPollingService : IAsyncDisposable
     public async Task StartAsync()
     {
         CurrentProfile = await _profileService.LoadAsync();
+        _recentMatchesService.ResetForProfile();
 
         if (CurrentProfile is not null)
         {
@@ -67,10 +71,20 @@ public sealed class RankPollingService : IAsyncDisposable
             var profile = await _apiService.ResolveProfileAsync(nickname);
             CurrentProfile = profile;
             await _profileService.SaveAsync(profile);
+            _recentMatchesService.ResetForProfile();
 
             try
             {
                 var snapshot = await _apiService.GetRankAsync(profile.Uid);
+
+                try
+                {
+                    var recentMatches = await _apiService.GetRecentMatchesAsync(profile.Uid);
+                    _recentMatchesService.Update(recentMatches);
+                }
+                catch
+                {
+                }
 
                 if (_sessionService.Current.StartRp is null)
                 {
@@ -116,6 +130,15 @@ public sealed class RankPollingService : IAsyncDisposable
             Changed?.Invoke(this, EventArgs.Empty);
 
             var snapshot = await _apiService.GetRankAsync(profile.Uid);
+
+            try
+            {
+                var recentMatches = await _apiService.GetRecentMatchesAsync(profile.Uid);
+                _recentMatchesService.Update(recentMatches);
+            }
+            catch
+            {
+            }
 
             if (_sessionService.Current.StartRp is null)
             {
@@ -171,6 +194,7 @@ public sealed class RankPollingService : IAsyncDisposable
             _sessionService.GetDelta(snapshot.Rp),
             App.LocalizationService.SeasonRemaining(snapshot.SeasonEnd),
             App.LocalizationService.Target(targetText),
+            _recentMatchesService.GetDisplay(settings.RecentMatchesMode),
             settings.OverlayPreset,
             settings.OverlayBackgroundEnabled,
             settings.OverlayBackgroundOpacity,
@@ -182,7 +206,8 @@ public sealed class RankPollingService : IAsyncDisposable
             settings.OverlayShowRank,
             settings.OverlayShowSession,
             settings.OverlayShowSeason,
-            settings.OverlayShowTarget));
+            settings.OverlayShowTarget,
+            settings.OverlayShowRecentMatches));
     }
 
     private async Task RunLoopAsync(CancellationToken cancellationToken)
@@ -200,18 +225,6 @@ public sealed class RankPollingService : IAsyncDisposable
                 break;
             }
         }
-    }
-
-    private static string FormatSeasonRemaining(DateTimeOffset? seasonEnd)
-    {
-        if (seasonEnd is null) return "";
-
-        var remaining = seasonEnd.Value - DateTimeOffset.Now;
-        if (remaining <= TimeSpan.Zero) return "시즌 종료";
-
-        return remaining.TotalDays >= 1
-            ? $"시즌 종료까지 {(int)remaining.TotalDays}일 {remaining.Hours}시간"
-            : $"시즌 종료까지 {Math.Max(0, remaining.Hours)}시간 {remaining.Minutes}분";
     }
 
     private static string GetErrorMessage(Exception exception)

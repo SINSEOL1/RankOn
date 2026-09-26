@@ -22,6 +22,7 @@ public sealed class AppSettings
     public int? SessionStartRp { get; set; }
     public DateTimeOffset? SessionStartedAt { get; set; }
     public string TargetRpDisplayMode { get; set; } = "Auto";
+    public string RecentMatchesMode { get; set; } = "ProgramStart";
     public string OverlayPreset { get; set; } = "Standard";
     public bool OverlayBackgroundEnabled { get; set; } = true;
     public double OverlayBackgroundOpacity { get; set; } = 0.88;
@@ -34,4 +35,5 @@ public sealed class AppSettings
     public bool OverlayShowSession { get; set; } = true;
     public bool OverlayShowSeason { get; set; } = true;
     public bool OverlayShowTarget { get; set; } = true;
+    public bool OverlayShowRecentMatches { get; set; } = true;
 }
