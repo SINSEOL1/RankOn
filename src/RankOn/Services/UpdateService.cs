@@ -1,265 +1,207 @@
 using System.Diagnostics;
 using System.IO;
 using System.Net;
-using System.Net.Http.Json;
+using System.Net.Http.Headers;
 using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace RankOn.Services;
 
+public sealed record UpdateInfo(
+    Version Version,
+    string VersionText,
+    string InstallerUrl);
+
 public sealed class UpdateService : IDisposable
 {
-    private readonly HttpClient _client = new()
-    {
-        Timeout = TimeSpan.FromMinutes(5)
-    };
+    private const string LatestReleaseApi =
+        "https://api.github.com/repos/SINSEOL1/RankOn/releases/latest";
+
+    private readonly HttpClient _httpClient = new();
 
     public UpdateService()
     {
-        _client.DefaultRequestHeaders.UserAgent.ParseAdd("RankOn-Updater");
+        var current = Assembly.GetExecutingAssembly().GetName().Version;
+        var versionText = current is null
+            ? "1.0.0"
+            : $"{current.Major}.{current.Minor}.{Math.Max(0, current.Build)}";
+
+        _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(
+            $"RankOn/{versionText}");
+
+        _httpClient.DefaultRequestHeaders.Accept.Add(
+            new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
+
+        _httpClient.Timeout = TimeSpan.FromMinutes(5);
     }
 
-    public async Task<UpdateInfo?> CheckAsync(CancellationToken cancellationToken = default)
+    public async Task<UpdateInfo?> CheckAsync(
+        CancellationToken cancellationToken = default)
     {
-        using var response = await _client.GetAsync(
-            "https://api.github.com/repos/SINSEOL1/RankOn/releases/latest",
+        using var response = await _httpClient.GetAsync(
+            LatestReleaseApi,
             cancellationToken);
 
         if (response.StatusCode == HttpStatusCode.NotFound)
-        {
             return null;
-        }
 
         response.EnsureSuccessStatusCode();
 
-        var release = await response.Content.ReadFromJsonAsync<GitHubRelease>(
+        await using var stream = await response.Content.ReadAsStreamAsync(
+            cancellationToken);
+
+        var release = await JsonSerializer.DeserializeAsync<ReleasePayload>(
+            stream,
             cancellationToken: cancellationToken);
 
-        if (release is null || string.IsNullOrWhiteSpace(release.TagName))
+        if (release is null ||
+            string.IsNullOrWhiteSpace(release.TagName) ||
+            release.Draft ||
+            release.Prerelease)
         {
             return null;
         }
 
-        var current = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(0, 0);
-        var raw = release.TagName.Trim().TrimStart('v', 'V');
+        var versionText = release.TagName.Trim().TrimStart('v', 'V');
 
-        if (!Version.TryParse(raw, out var latest) || latest <= current)
-        {
+        if (!Version.TryParse(versionText, out var latestVersion))
             return null;
-        }
 
-        var installer = release.Assets
-            .FirstOrDefault(asset =>
-                asset.Name.StartsWith("RankOn-Setup-v", StringComparison.OrdinalIgnoreCase) &&
-                asset.Name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) &&
-                !string.IsNullOrWhiteSpace(asset.BrowserDownloadUrl));
+        var currentVersion =
+            Assembly.GetExecutingAssembly().GetName().Version
+            ?? new Version(1, 0, 0, 0);
 
-        if (installer is null)
+        if (latestVersion <= currentVersion)
+            return null;
+
+        var installer = release.Assets.FirstOrDefault(asset =>
+            asset.Name.StartsWith(
+                "RankOn-Setup-v",
+                StringComparison.OrdinalIgnoreCase) &&
+            asset.Name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase));
+
+        if (installer is null ||
+            string.IsNullOrWhiteSpace(installer.BrowserDownloadUrl))
         {
             return null;
         }
 
         return new UpdateInfo(
-            release.TagName,
-            installer.Name,
-            installer.BrowserDownloadUrl,
-            installer.Digest);
+            latestVersion,
+            versionText,
+            installer.BrowserDownloadUrl);
     }
 
-    public async Task<bool> DownloadAndInstallAsync(
+    public async Task<string> DownloadInstallerAsync(
         UpdateInfo update,
+        IProgress<double>? progress = null,
         CancellationToken cancellationToken = default)
     {
-        var updateDirectory = Path.Combine(
+        var directory = Path.Combine(
             Path.GetTempPath(),
             "RankOn",
-            "Updates",
-            SanitizeVersion(update.Version));
+            "updates",
+            update.VersionText);
 
-        Directory.CreateDirectory(updateDirectory);
+        Directory.CreateDirectory(directory);
 
-        var installerPath = Path.Combine(updateDirectory, update.FileName);
-        var partialPath = installerPath + ".download";
+        var destination = Path.Combine(
+            directory,
+            $"RankOn-Setup-v{update.VersionText}.exe");
 
+        using var response = await _httpClient.GetAsync(
+            update.InstallerUrl,
+            HttpCompletionOption.ResponseHeadersRead,
+            cancellationToken);
+
+        response.EnsureSuccessStatusCode();
+
+        var totalLength = response.Content.Headers.ContentLength;
+
+        await using var input = await response.Content.ReadAsStreamAsync(
+            cancellationToken);
+
+        await using var output = new FileStream(
+            destination,
+            FileMode.Create,
+            FileAccess.Write,
+            FileShare.None,
+            81920,
+            useAsync: true);
+
+        var buffer = new byte[81920];
+        long totalRead = 0;
+
+        while (true)
+        {
+            var read = await input.ReadAsync(
+                buffer.AsMemory(0, buffer.Length),
+                cancellationToken);
+
+            if (read == 0)
+                break;
+
+            await output.WriteAsync(
+                buffer.AsMemory(0, read),
+                cancellationToken);
+
+            totalRead += read;
+
+            if (totalLength is > 0)
+            {
+                progress?.Report(
+                    Math.Clamp(totalRead / (double)totalLength.Value, 0, 1));
+            }
+        }
+
+        progress?.Report(1);
+        return destination;
+    }
+
+    public bool LaunchInstaller(string installerPath)
+    {
         try
         {
-            if (File.Exists(partialPath))
+            Process.Start(new ProcessStartInfo
             {
-                File.Delete(partialPath);
-            }
+                FileName = installerPath,
+                Arguments =
+                    "/SILENT /SUPPRESSMSGBOXES /CLOSEAPPLICATIONS /NORESTART",
+                UseShellExecute = true
+            });
 
-            using (var response = await _client.GetAsync(
-                       update.DownloadUrl,
-                       HttpCompletionOption.ResponseHeadersRead,
-                       cancellationToken))
-            {
-                response.EnsureSuccessStatusCode();
-
-                await using var source = await response.Content.ReadAsStreamAsync(cancellationToken);
-                await using var destination = new FileStream(
-                    partialPath,
-                    FileMode.Create,
-                    FileAccess.Write,
-                    FileShare.None,
-                    81920,
-                    useAsync: true);
-
-                await source.CopyToAsync(destination, cancellationToken);
-            }
-
-            if (!await VerifyDigestAsync(partialPath, update.Digest, cancellationToken))
-            {
-                File.Delete(partialPath);
-                return false;
-            }
-
-            File.Move(partialPath, installerPath, overwrite: true);
-
-            var executablePath = Environment.ProcessPath;
-            if (string.IsNullOrWhiteSpace(executablePath))
-            {
-                executablePath = Path.Combine(AppContext.BaseDirectory, "RankOn.exe");
-            }
-
-            LaunchUpdateHelper(installerPath, executablePath);
             return true;
         }
         catch
         {
-            try
-            {
-                if (File.Exists(partialPath))
-                {
-                    File.Delete(partialPath);
-                }
-            }
-            catch
-            {
-            }
-
             return false;
         }
     }
 
-    private static async Task<bool> VerifyDigestAsync(
-        string path,
-        string? digest,
-        CancellationToken cancellationToken)
-    {
-        if (string.IsNullOrWhiteSpace(digest) ||
-            !digest.StartsWith("sha256:", StringComparison.OrdinalIgnoreCase))
-        {
-            return true;
-        }
+    public void Dispose() => _httpClient.Dispose();
 
-        var expected = digest["sha256:".Length..].Trim();
-
-        await using var stream = new FileStream(
-            path,
-            FileMode.Open,
-            FileAccess.Read,
-            FileShare.Read,
-            81920,
-            useAsync: true);
-
-        var actualBytes = await SHA256.HashDataAsync(stream, cancellationToken);
-        var actual = Convert.ToHexString(actualBytes);
-
-        return string.Equals(actual, expected, StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static void LaunchUpdateHelper(string installerPath, string executablePath)
-    {
-        var scriptPath = Path.Combine(
-            Path.GetTempPath(),
-            "RankOn",
-            "Updates",
-            $"apply-{Guid.NewGuid():N}.ps1");
-
-        Directory.CreateDirectory(Path.GetDirectoryName(scriptPath)!);
-
-        var installer = EscapePowerShellLiteral(installerPath);
-        var executable = EscapePowerShellLiteral(executablePath);
-        var script = EscapePowerShellLiteral(scriptPath);
-        var currentPid = Environment.ProcessId;
-
-        var contents = $$"""
-$ErrorActionPreference = 'SilentlyContinue'
-$installer = '{{installer}}'
-$executable = '{{executable}}'
-$script = '{{script}}'
-
-Wait-Process -Id {{currentPid}} -ErrorAction SilentlyContinue
-
-$process = Start-Process -FilePath $installer -ArgumentList @(
-    '/VERYSILENT',
-    '/SUPPRESSMSGBOXES',
-    '/NORESTART',
-    '/SP-',
-    '/CLOSEAPPLICATIONS'
-) -Wait -PassThru
-
-if ($process.ExitCode -eq 0 -and (Test-Path -LiteralPath $executable)) {
-    Start-Process -FilePath $executable
-}
-
-Remove-Item -LiteralPath $installer -Force -ErrorAction SilentlyContinue
-Remove-Item -LiteralPath $script -Force -ErrorAction SilentlyContinue
-""";
-
-        File.WriteAllText(scriptPath, contents, new UTF8Encoding(false));
-
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = "powershell.exe",
-            Arguments = $"-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File \"{scriptPath}\"",
-            UseShellExecute = false,
-            CreateNoWindow = true,
-            WorkingDirectory = AppContext.BaseDirectory
-        });
-    }
-
-    private static string EscapePowerShellLiteral(string value)
-    {
-        return value.Replace("'", "''");
-    }
-
-    private static string SanitizeVersion(string version)
-    {
-        return string.Concat(version.Where(ch => char.IsLetterOrDigit(ch) || ch is '.' or '-' or '_'));
-    }
-
-    public void Dispose()
-    {
-        _client.Dispose();
-    }
-
-    private sealed class GitHubRelease
+    private sealed class ReleasePayload
     {
         [JsonPropertyName("tag_name")]
-        public string TagName { get; set; } = "";
+        public string TagName { get; set; } = string.Empty;
+
+        [JsonPropertyName("draft")]
+        public bool Draft { get; set; }
+
+        [JsonPropertyName("prerelease")]
+        public bool Prerelease { get; set; }
 
         [JsonPropertyName("assets")]
-        public List<GitHubAsset> Assets { get; set; } = new();
+        public List<ReleaseAsset> Assets { get; set; } = [];
     }
 
-    private sealed class GitHubAsset
+    private sealed class ReleaseAsset
     {
         [JsonPropertyName("name")]
-        public string Name { get; set; } = "";
+        public string Name { get; set; } = string.Empty;
 
         [JsonPropertyName("browser_download_url")]
-        public string BrowserDownloadUrl { get; set; } = "";
-
-        [JsonPropertyName("digest")]
-        public string? Digest { get; set; }
+        public string BrowserDownloadUrl { get; set; } = string.Empty;
     }
 }
-
-public sealed record UpdateInfo(
-    string Version,
-    string FileName,
-    string DownloadUrl,
-    string? Digest);
