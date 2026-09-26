@@ -19,6 +19,8 @@ WizardStyle=modern
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 UninstallDisplayName=랭크온
+UninstallDisplayIcon={app}\RankOn.exe
+SetupIconFile=..\src\RankOn\Resources\RankOn.ico
 
 [Files]
 Source: "..\publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs

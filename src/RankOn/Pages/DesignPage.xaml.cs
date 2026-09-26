@@ -36,6 +36,7 @@ public partial class DesignPage : UserControl
         s.OverlayShowSession = true;
         s.OverlayShowSeason = true;
         s.OverlayShowTarget = true;
+        s.OverlayShowRecentMatches = true;
 
         switch (preset)
         {
@@ -91,6 +92,7 @@ public partial class DesignPage : UserControl
         s.OverlayShowSession = ShowSessionCheckBox.IsChecked == true;
         s.OverlayShowSeason = ShowSeasonCheckBox.IsChecked == true;
         s.OverlayShowTarget = ShowTargetCheckBox.IsChecked == true;
+        s.OverlayShowRecentMatches = ShowRecentMatchesCheckBox.IsChecked == true;
 
         if (TargetRpDisplayComboBox.SelectedItem is ComboBoxItem { Tag: string mode })
         {
@@ -126,6 +128,7 @@ public partial class DesignPage : UserControl
         ShowSessionCheckBox.IsChecked = s.OverlayShowSession;
         ShowSeasonCheckBox.IsChecked = s.OverlayShowSeason;
         ShowTargetCheckBox.IsChecked = s.OverlayShowTarget;
+        ShowRecentMatchesCheckBox.IsChecked = s.OverlayShowRecentMatches;
 
         foreach (var item in TargetRpDisplayComboBox.Items.OfType<ComboBoxItem>())
         {
@@ -162,6 +165,7 @@ public partial class DesignPage : UserControl
         PreviewBadge.Margin = vertical ? new Thickness(0, 0, 0, 10) : new Thickness(0);
         PreviewInfo.Margin = vertical ? new Thickness(0) : new Thickness(16, 0, 24, 0);
         PreviewSession.Margin = vertical ? new Thickness(0, 10, 0, 0) : new Thickness(0);
+        PreviewRecentMatchesPanel.HorizontalAlignment = vertical ? HorizontalAlignment.Center : HorizontalAlignment.Left;
 
         PreviewNickname.Visibility = BoolVisibility(s.OverlayShowNickname);
         PreviewTier.Visibility = BoolVisibility(s.OverlayShowTier);
@@ -169,6 +173,7 @@ public partial class DesignPage : UserControl
         PreviewRank.Visibility = BoolVisibility(s.OverlayShowRank);
         PreviewSession.Visibility = BoolVisibility(s.OverlayShowSession);
         PreviewSeason.Visibility = BoolVisibility(s.OverlayShowSeason);
+        PreviewRecentMatchesPanel.Visibility = BoolVisibility(s.OverlayShowRecentMatches);
 
         PreviewTarget.Text = s.TargetRpDisplayMode switch
         {
@@ -177,6 +182,52 @@ public partial class DesignPage : UserControl
             _ => ""
         };
         PreviewTarget.Visibility = BoolVisibility(s.OverlayShowTarget && !string.IsNullOrWhiteSpace(PreviewTarget.Text));
+
+        RenderPreviewRecentMatches();
+    }
+
+    private void RenderPreviewRecentMatches()
+    {
+        int?[] ranks = [1, 5, 3, 8, 2, 4, 1, 6, 2, null];
+        PreviewRecentMatchesGrid.Children.Clear();
+
+        foreach (var rank in ranks)
+        {
+            PreviewRecentMatchesGrid.Children.Add(CreateRecentMatchTile(rank));
+        }
+    }
+
+    private static Border CreateRecentMatchTile(int? rank)
+    {
+        return new Border
+        {
+            Width = 25,
+            Height = 25,
+            Margin = new Thickness(2),
+            CornerRadius = new CornerRadius(4),
+            Background = GetRecentMatchBrush(rank),
+            Child = new TextBlock
+            {
+                Text = rank?.ToString() ?? "",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Foreground = Brushes.White,
+                FontSize = 11,
+                FontWeight = FontWeights.SemiBold
+            }
+        };
+    }
+
+    private static Brush GetRecentMatchBrush(int? rank)
+    {
+        return rank switch
+        {
+            1 => new SolidColorBrush(Color.FromRgb(201, 147, 38)),
+            2 => new SolidColorBrush(Color.FromRgb(143, 154, 168)),
+            3 => new SolidColorBrush(Color.FromRgb(168, 106, 67)),
+            >= 4 and <= 8 => new SolidColorBrush(Color.FromRgb(58, 66, 77)),
+            _ => new SolidColorBrush(Color.FromArgb(90, 58, 66, 77))
+        };
     }
 
     private static Visibility BoolVisibility(bool visible) => visible ? Visibility.Visible : Visibility.Collapsed;

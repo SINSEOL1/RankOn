@@ -30,6 +30,20 @@ public partial class SettingsPage : UserControl
             }
         }
 
+        foreach (var item in RecentMatchesModeComboBox.Items.OfType<ComboBoxItem>())
+        {
+            if (string.Equals(item.Tag as string, s.RecentMatchesMode, StringComparison.OrdinalIgnoreCase))
+            {
+                RecentMatchesModeComboBox.SelectedItem = item;
+                break;
+            }
+        }
+
+        if (RecentMatchesModeComboBox.SelectedItem is null)
+        {
+            RecentMatchesModeComboBox.SelectedIndex = 0;
+        }
+
         _loaded = true;
     }
 
@@ -74,5 +88,15 @@ public partial class SettingsPage : UserControl
         {
             mainWindow.RefreshLocalization();
         }
+    }
+
+    private async void RecentMatchesModeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!_loaded || RecentMatchesModeComboBox.SelectedItem is not ComboBoxItem { Tag: string mode }) return;
+
+        var s = App.SettingsService.Current;
+        s.RecentMatchesMode = mode;
+        await App.SettingsService.SaveAsync(s);
+        App.RankPollingService.RebuildOverlayState();
     }
 }

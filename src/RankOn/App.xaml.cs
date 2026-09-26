@@ -12,6 +12,7 @@ public partial class App : System.Windows.Application
     public static AppSettingsService SettingsService { get; } = new();
     public static OverlayStateService OverlayStateService { get; } = new();
     public static SessionService SessionService { get; } = new(SettingsService);
+    public static RecentMatchesService RecentMatchesService { get; } = new();
     public static ThemeService ThemeService { get; } = new();
     public static LocalizationService LocalizationService { get; } = new();
     public static ProfileService ProfileService { get; } = new();
@@ -20,6 +21,7 @@ public partial class App : System.Windows.Application
         ProfileService,
         RankApiService,
         SessionService,
+        RecentMatchesService,
         OverlayStateService,
         SettingsService);
     public static LocalBroadcastServer BroadcastServer { get; } = new(OverlayStateService, 19872);
