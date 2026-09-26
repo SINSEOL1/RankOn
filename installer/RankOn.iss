@@ -20,6 +20,8 @@ ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 UninstallDisplayName=랭크온
 UninstallDisplayIcon={app}\RankOn.exe
+CloseApplications=yes
+RestartApplications=no
 SetupIconFile=RankOn-Setup.ico
 
 [Files]
@@ -33,4 +35,4 @@ Name: "{autodesktop}\랭크온"; Filename: "{app}\RankOn.exe"; Tasks: desktopico
 Name: "desktopicon"; Description: "바탕 화면 바로가기 만들기"; GroupDescription: "추가 아이콘:"; Flags: unchecked
 
 [Run]
-Filename: "{app}\RankOn.exe"; Description: "랭크온 실행"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\RankOn.exe"; Flags: nowait
