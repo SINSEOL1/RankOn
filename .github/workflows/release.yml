@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   release:
-    if: startsWith(github.ref, 'refs/tags/v') || startsWith(github.event.head_commit.message, 'release: v')
+    if: "${{ startsWith(github.ref, 'refs/tags/v') || startsWith(github.event.head_commit.message, 'release: v') }}"
     runs-on: windows-latest
 
     steps:
@@ -80,17 +80,6 @@ jobs:
           tag_name: v${{ steps.version.outputs.version }}
           target_commitish: ${{ github.sha }}
           name: RankOn v${{ steps.version.outputs.version }}
-          body: |
-            ## RankOn v${{ steps.version.outputs.version }}
-
-            ### 최근 전적
-            - 오버레이에 최근 전적을 2×5 타일로 표시합니다.
-            - 1등은 금색, 2등은 은색, 3등은 동색, 4~8등은 회색으로 구분합니다.
-            - 설정에서 `프로그램 시작 이후` / `최근 10게임` 기준을 선택할 수 있습니다.
-            - `프로그램 시작 이후` 모드에서는 새 세션을 시작하면 최근 전적도 초기화됩니다.
-            - PC 오버레이와 OBS 방송 오버레이에 모두 적용됩니다.
-
-            ### 디자인
-            - RankOn 전용 H-1 스타일 앱 아이콘을 적용했습니다.
-            - 설치 프로그램 아이콘도 새 디자인으로 변경했습니다.
+          generate_release_notes: true
+          make_latest: true
           files: installer/output/RankOn-Setup-*.exe
