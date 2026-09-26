@@ -10,7 +10,14 @@
                     <CheckBox x:Name="StartWithWindowsCheckBox" Content="Windows 시작 시 실행" Margin="0,14,0,0" Click="GeneralSetting_Changed"/>
                     <CheckBox x:Name="StartMinimizedCheckBox" Content="실행 시 트레이에서 시작" Click="GeneralSetting_Changed"/>
                     <CheckBox x:Name="CloseToTrayCheckBox" Content="X 버튼을 누르면 트레이로 이동" Click="GeneralSetting_Changed"/>
-                    <CheckBox x:Name="AutoUpdateCheckBox" Content="새 버전 자동 확인" Click="GeneralSetting_Changed"/>
+                    <CheckBox x:Name="AutoUpdateCheckBox" Content="새 버전 자동 업데이트" Click="GeneralSetting_Changed"/>
+                    <TextBlock Text="새 버전이 있으면 자동으로 다운로드하고 설치한 뒤 랭크온을 다시 실행합니다."
+                               Width="520"
+                               MaxWidth="520"
+                               Margin="24,2,0,0"
+                               HorizontalAlignment="Left"
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource MutedTextBrush}"/>
                 </StackPanel>
             </Border>
             <Border Margin="0,18,0,0" Padding="22" Background="{DynamicResource SurfaceBrush}" CornerRadius="12">
