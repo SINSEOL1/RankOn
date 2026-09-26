@@ -105,16 +105,14 @@ public partial class App : System.Windows.Application
         {
             var update = await UpdateService.CheckAsync();
             if (update is null)
-            {
                 return;
-            }
 
-            var started = await UpdateService.DownloadAndInstallAsync(update);
-            if (!started)
-            {
+            var installerPath = await UpdateService.DownloadInstallerAsync(update);
+
+            if (!UpdateService.LaunchInstaller(installerPath))
                 return;
-            }
 
+            await Task.Delay(300);
             Current.Dispatcher.Invoke(ExitApplication);
         }
         catch

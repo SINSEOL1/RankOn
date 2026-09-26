@@ -38,21 +38,32 @@ public partial class AboutPage : UserControl
                 return;
             }
 
-            UpdateStatusText.Text = App.LocalizationService.T("새 버전을 다운로드하는 중입니다.");
-
-            var started = await App.UpdateService.DownloadAndInstallAsync(update);
-            if (!started)
+            var progress = new Progress<double>(value =>
             {
-                UpdateStatusText.Text = App.LocalizationService.T("업데이트를 다운로드하지 못했습니다.");
+                UpdateStatusText.Text =
+                    App.LocalizationService.T(
+                        $"새 버전을 다운로드하는 중입니다. {Math.Round(value * 100):0}%");
+            });
+
+            var installerPath =
+                await App.UpdateService.DownloadInstallerAsync(update, progress);
+
+            UpdateStatusText.Text = App.LocalizationService.T("업데이트를 설치합니다.");
+
+            if (!App.UpdateService.LaunchInstaller(installerPath))
+            {
+                UpdateStatusText.Text =
+                    App.LocalizationService.T("업데이트 설치 프로그램을 실행하지 못했습니다.");
                 return;
             }
 
-            UpdateStatusText.Text = App.LocalizationService.T("업데이트를 설치합니다.");
+            await Task.Delay(300);
             App.ExitApplication();
         }
         catch
         {
-            UpdateStatusText.Text = App.LocalizationService.T("업데이트 정보를 확인하지 못했습니다.");
+            UpdateStatusText.Text =
+                App.LocalizationService.T("업데이트 다운로드에 실패했습니다.");
         }
         finally
         {
