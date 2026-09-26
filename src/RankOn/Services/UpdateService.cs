@@ -187,11 +187,11 @@ public sealed class UpdateService : IDisposable
 
         var contents = $"""
 $ErrorActionPreference = 'SilentlyContinue'
-$installer = '{installer}'
-$executable = '{executable}'
-$script = '{script}'
+$installer = '{{installer}}'
+$executable = '{{executable}}'
+$script = '{{script}}'
 
-Wait-Process -Id {currentPid} -ErrorAction SilentlyContinue
+Wait-Process -Id {{currentPid}} -ErrorAction SilentlyContinue
 
 $process = Start-Process -FilePath $installer -ArgumentList @(
     '/VERYSILENT',
@@ -201,9 +201,9 @@ $process = Start-Process -FilePath $installer -ArgumentList @(
     '/CLOSEAPPLICATIONS'
 ) -Wait -PassThru
 
-if ($process.ExitCode -eq 0 -and (Test-Path -LiteralPath $executable)) {{
+if ($process.ExitCode -eq 0 -and (Test-Path -LiteralPath $executable)) {
     Start-Process -FilePath $executable
-}}
+}
 
 Remove-Item -LiteralPath $installer -Force -ErrorAction SilentlyContinue
 Remove-Item -LiteralPath $script -Force -ErrorAction SilentlyContinue
