@@ -185,7 +185,7 @@ public sealed class UpdateService : IDisposable
         var script = EscapePowerShellLiteral(scriptPath);
         var currentPid = Environment.ProcessId;
 
-        var contents = $"""
+        var contents = $$"""
 $ErrorActionPreference = 'SilentlyContinue'
 $installer = '{{installer}}'
 $executable = '{{executable}}'
