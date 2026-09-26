@@ -1,0 +1,74 @@
+name: Publish v1.1.2
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/release-v1.1.2-once.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Download rank tier asset
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "src\RankOn\Resources" | Out-Null
+          curl.exe -L --fail "https://support.playeternalreturn.com/hc/article_attachments/45305347324825" -o "src\RankOn\Resources\rank-tiers.png"
+          if (-not (Test-Path "src\RankOn\Resources\rank-tiers.png")) { throw "rank tier asset download failed" }
+
+      - name: Publish
+        shell: pwsh
+        run: |
+          dotnet publish src/RankOn/RankOn.csproj `
+            --configuration Release `
+            --runtime win-x64 `
+            --self-contained true `
+            -p:Version=1.1.2 `
+            -p:PublishSingleFile=true `
+            -p:IncludeNativeLibrariesForSelfExtract=true `
+            --output publish
+
+      - name: Generate installer icon
+        run: python scripts/generate-installer-icon.py
+
+      - name: Install Inno Setup
+        run: choco install innosetup --no-progress -y
+
+      - name: Build installer
+        shell: pwsh
+        run: |
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DMyAppVersion=1.1.2" "installer\RankOn.iss"
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.1.2
+          target_commitish: ${{ github.sha }}
+          name: RankOn v1.1.2
+          make_latest: true
+          body: |
+            # RankOn v1.1.2
+
+            ## 수정
+            - 프로그램 실행 창과 작업표시줄에서 RankOn 아이콘이 표시되지 않던 문제를 수정했습니다.
+            - 시스템 트레이에서도 RankOn 아이콘이 표시되도록 수정했습니다.
+          files: installer/output/RankOn-Setup-v1.1.2.exe
