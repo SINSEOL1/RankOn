@@ -1,0 +1,75 @@
+name: Publish v1.1.4
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/release-v1.1.4-once.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Generate Windows icons
+        run: python scripts/generate-installer-icon.py
+
+      - name: Download rank tier asset
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "src\RankOn\Resources" | Out-Null
+          curl.exe -L --fail "https://support.playeternalreturn.com/hc/article_attachments/45305347324825" -o "src\RankOn\Resources\rank-tiers.png"
+          if (-not (Test-Path "src\RankOn\Resources\rank-tiers.png")) { throw "rank tier asset download failed" }
+
+      - name: Publish
+        shell: pwsh
+        run: |
+          dotnet publish src/RankOn/RankOn.csproj `
+            --configuration Release `
+            --runtime win-x64 `
+            --self-contained true `
+            -p:Version=1.1.4 `
+            -p:PublishSingleFile=true `
+            -p:IncludeNativeLibrariesForSelfExtract=true `
+            --output publish
+
+      - name: Install Inno Setup
+        run: choco install innosetup --no-progress -y
+
+      - name: Build installer
+        shell: pwsh
+        run: |
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DMyAppVersion=1.1.4" "installer\RankOn.iss"
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.1.4
+          target_commitish: ${{ github.sha }}
+          name: RankOn v1.1.4
+          make_latest: true
+          body: |
+            # RankOn v1.1.4
+
+            ## 수정
+            - 작업표시줄에서 RankOn 아이콘 대신 Windows 기본 아이콘이 표시되던 문제를 수정했습니다.
+            - 실행 파일에 16 / 24 / 32 / 48 / 64 / 128 / 256px Windows용 아이콘을 포함하도록 변경했습니다.
+            - 프로그램 창, 작업표시줄, 탐색기, 바로가기, 시스템 트레이에서 동일한 RankOn 아이콘을 사용합니다.
+          files: installer/output/RankOn-Setup-v1.1.4.exe
