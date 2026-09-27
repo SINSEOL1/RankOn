@@ -27,6 +27,9 @@ jobs:
         with:
           python-version: "3.x"
 
+      - name: Generate Windows icons
+        run: python scripts/generate-installer-icon.py
+
       - name: Download rank tier asset
         shell: pwsh
         run: |
@@ -49,9 +52,6 @@ jobs:
           -p:PublishSingleFile=true
           -p:IncludeNativeLibrariesForSelfExtract=true
           --output publish
-
-      - name: Generate installer icon
-        run: python scripts/generate-installer-icon.py
 
       - name: Install Inno Setup
         run: choco install innosetup --no-progress -y
