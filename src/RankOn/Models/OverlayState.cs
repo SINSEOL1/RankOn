@@ -18,6 +18,7 @@ public sealed record OverlayState(
     double FontScale,
     bool ShowNickname,
     bool ShowTier,
+    bool ShowTierIcon,
     bool ShowRp,
     bool ShowRank,
     bool ShowSession,
@@ -27,5 +28,5 @@ public sealed record OverlayState(
 {
     public static OverlayState Empty { get; } = new(
         false, "", "", "", 0, 0, 0, "", "", Array.Empty<RecentMatchResult>(), "Standard",
-        true, 0.88, 14, 1.0, true, true, true, true, true, true, true, true);
+        true, 0.88, 14, 1.0, true, true, true, true, true, true, true, true, true);
 }
