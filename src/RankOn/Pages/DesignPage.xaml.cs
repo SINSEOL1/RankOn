@@ -165,13 +165,18 @@ public partial class DesignPage : UserControl
 
         var vertical = s.OverlayPreset == "Vertical";
         PreviewPanel.Orientation = vertical ? Orientation.Vertical : Orientation.Horizontal;
+        var showTierIcon = s.OverlayShowTierIcon && PreviewRankIcon.Source is not null;
         PreviewBadge.Margin = vertical ? new Thickness(0, 0, 0, 10) : new Thickness(0);
-        PreviewInfo.Margin = vertical ? new Thickness(0) : new Thickness(16, 0, 24, 0);
+        PreviewInfo.Margin = vertical
+            ? new Thickness(0)
+            : showTierIcon
+                ? new Thickness(16, 0, 24, 0)
+                : new Thickness(0, 0, 24, 0);
         PreviewSession.Margin = vertical ? new Thickness(0, 10, 0, 0) : new Thickness(0);
         PreviewRecentMatchesPanel.HorizontalAlignment = vertical ? HorizontalAlignment.Center : HorizontalAlignment.Left;
 
         PreviewNickname.Visibility = BoolVisibility(s.OverlayShowNickname);
-        PreviewBadge.Visibility = BoolVisibility(s.OverlayShowTierIcon && PreviewRankIcon.Source is not null);
+        PreviewBadge.Visibility = BoolVisibility(showTierIcon);
         PreviewTier.Visibility = BoolVisibility(s.OverlayShowTier);
         PreviewRp.Visibility = BoolVisibility(s.OverlayShowRp);
         PreviewRank.Visibility = BoolVisibility(s.OverlayShowRank);
