@@ -38,7 +38,8 @@ public partial class OverlayWindow : Window
         SeasonText.Text = state.SeasonRemaining;
         TargetText.Text = state.TargetRpText;
         RankIconImage.Source = TierIconService.GetImage(state.TierKey);
-        BadgeBorder.Visibility = state.ShowTierIcon && RankIconImage.Source is not null
+        var showTierIcon = state.ShowTierIcon && RankIconImage.Source is not null;
+        BadgeBorder.Visibility = showTierIcon
             ? Visibility.Visible
             : Visibility.Collapsed;
 
