@@ -31,6 +31,7 @@ public partial class DesignPage : UserControl
 
         s.OverlayShowNickname = true;
         s.OverlayShowTier = true;
+        s.OverlayShowTierIcon = true;
         s.OverlayShowRp = true;
         s.OverlayShowRank = true;
         s.OverlayShowSession = true;
@@ -87,6 +88,7 @@ public partial class DesignPage : UserControl
         s.OverlayFontScale = FontScaleSlider.Value / 100.0;
         s.OverlayShowNickname = ShowNicknameCheckBox.IsChecked == true;
         s.OverlayShowTier = ShowTierCheckBox.IsChecked == true;
+        s.OverlayShowTierIcon = ShowTierIconCheckBox.IsChecked == true;
         s.OverlayShowRp = ShowRpCheckBox.IsChecked == true;
         s.OverlayShowRank = ShowRankCheckBox.IsChecked == true;
         s.OverlayShowSession = ShowSessionCheckBox.IsChecked == true;
@@ -123,6 +125,7 @@ public partial class DesignPage : UserControl
         FontScaleSlider.Value = s.OverlayFontScale * 100;
         ShowNicknameCheckBox.IsChecked = s.OverlayShowNickname;
         ShowTierCheckBox.IsChecked = s.OverlayShowTier;
+        ShowTierIconCheckBox.IsChecked = s.OverlayShowTierIcon;
         ShowRpCheckBox.IsChecked = s.OverlayShowRp;
         ShowRankCheckBox.IsChecked = s.OverlayShowRank;
         ShowSessionCheckBox.IsChecked = s.OverlayShowSession;
@@ -168,6 +171,7 @@ public partial class DesignPage : UserControl
         PreviewRecentMatchesPanel.HorizontalAlignment = vertical ? HorizontalAlignment.Center : HorizontalAlignment.Left;
 
         PreviewNickname.Visibility = BoolVisibility(s.OverlayShowNickname);
+        PreviewBadge.Visibility = BoolVisibility(s.OverlayShowTierIcon && PreviewRankIcon.Source is not null);
         PreviewTier.Visibility = BoolVisibility(s.OverlayShowTier);
         PreviewRp.Visibility = BoolVisibility(s.OverlayShowRp);
         PreviewRank.Visibility = BoolVisibility(s.OverlayShowRank);
