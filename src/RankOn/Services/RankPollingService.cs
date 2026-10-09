@@ -202,6 +202,7 @@ public sealed class RankPollingService : IAsyncDisposable
             settings.OverlayFontScale,
             settings.OverlayShowNickname,
             settings.OverlayShowTier,
+            settings.OverlayShowTierIcon,
             settings.OverlayShowRp,
             settings.OverlayShowRank,
             settings.OverlayShowSession,
