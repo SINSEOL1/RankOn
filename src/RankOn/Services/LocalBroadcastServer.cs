@@ -200,7 +200,7 @@ async function refresh(){
     get('target').textContent=state.targetRpText||'';
     const badge=get('badge');
     const tierIndex=tierIndexes[state.tierKey];
-    if(Number.isInteger(tierIndex)){
+    if(state.showTierIcon&&Number.isInteger(tierIndex)){
       badge.style.backgroundPositionX=(-(tierIndex*73.81+5.9))+'px';
       show('badge',true);
     }else{

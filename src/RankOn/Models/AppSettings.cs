@@ -30,6 +30,7 @@ public sealed class AppSettings
     public double OverlayFontScale { get; set; } = 1.0;
     public bool OverlayShowNickname { get; set; } = true;
     public bool OverlayShowTier { get; set; } = true;
+    public bool OverlayShowTierIcon { get; set; } = true;
     public bool OverlayShowRp { get; set; } = true;
     public bool OverlayShowRank { get; set; } = true;
     public bool OverlayShowSession { get; set; } = true;
