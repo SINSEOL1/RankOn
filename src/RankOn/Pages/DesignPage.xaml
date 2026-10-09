@@ -20,6 +20,7 @@
                         <ComboBoxItem Content="자동" Tag="Auto"/><ComboBoxItem Content="다음 티어" Tag="NextTier"/><ComboBoxItem Content="데미갓" Tag="Demigod"/><ComboBoxItem Content="이터니티" Tag="Eternity"/><ComboBoxItem Content="숨김" Tag="Hidden"/>
                     </ComboBox>
                     <CheckBox x:Name="ShowNicknameCheckBox" Content="닉네임" Checked="DesignControl_Changed" Unchecked="DesignControl_Changed"/>
+                    <CheckBox x:Name="ShowTierIconCheckBox" Content="티어 이미지" Checked="DesignControl_Changed" Unchecked="DesignControl_Changed"/>
                     <CheckBox x:Name="ShowTierCheckBox" Content="티어" Checked="DesignControl_Changed" Unchecked="DesignControl_Changed"/>
                     <CheckBox x:Name="ShowRpCheckBox" Content="RP" Checked="DesignControl_Changed" Unchecked="DesignControl_Changed"/>
                     <CheckBox x:Name="ShowRankCheckBox" Content="순위" Checked="DesignControl_Changed" Unchecked="DesignControl_Changed"/>
