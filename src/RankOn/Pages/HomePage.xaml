@@ -48,6 +48,12 @@
                     <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
                         <Button Content="새 세션" Click="NewSession_Click" Style="{StaticResource PrimaryButtonStyle}"/>
                         <Button Content="직접 입력" Margin="8,0,0,0" Click="ManualSession_Click" Style="{StaticResource SecondaryButtonStyle}"/>
+                        <Button x:Name="AddPlacementButton"
+                                Content="전적 추가"
+                                Margin="8,0,0,0"
+                                Click="AddPlacement_Click"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                IsEnabled="False"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
