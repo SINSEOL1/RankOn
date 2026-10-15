@@ -65,6 +65,8 @@ public partial class OverlayWindow : Window
         SeasonText.TextAlignment = vertical ? TextAlignment.Center : TextAlignment.Left;
         TargetText.TextAlignment = vertical ? TextAlignment.Center : TextAlignment.Left;
         SessionText.Margin = vertical ? new Thickness(0, 10, 0, 0) : new Thickness(20, 0, 0, 0);
+        SessionText.HorizontalAlignment = vertical ? HorizontalAlignment.Center : HorizontalAlignment.Left;
+        SessionText.TextAlignment = vertical ? TextAlignment.Center : TextAlignment.Left;
 
         RootBorder.LayoutTransform = Transform.Identity;
         RootBorder.CornerRadius = new CornerRadius(Math.Clamp(state.CornerRadius, 0, 40));

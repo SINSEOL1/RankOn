@@ -173,6 +173,8 @@ public partial class DesignPage : UserControl
                 ? new Thickness(16, 0, 24, 0)
                 : new Thickness(0, 0, 24, 0);
         PreviewSession.Margin = vertical ? new Thickness(0, 10, 0, 0) : new Thickness(0);
+        PreviewSession.HorizontalAlignment = vertical ? HorizontalAlignment.Center : HorizontalAlignment.Left;
+        PreviewSession.TextAlignment = vertical ? TextAlignment.Center : TextAlignment.Left;
         PreviewRecentMatchesPanel.HorizontalAlignment = vertical ? HorizontalAlignment.Center : HorizontalAlignment.Left;
 
         PreviewNickname.Visibility = BoolVisibility(s.OverlayShowNickname);

@@ -109,7 +109,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 #root.vertical .top{flex-direction:column;text-align:center}
 #root.vertical .main{align-items:center}
 #root.vertical .rankline{justify-content:center}
-#root.vertical .session{margin-left:0;padding-left:0}
+#root.vertical .session{margin-left:0;padding-left:0;align-self:center;text-align:center}
 #root.vertical .recent{align-items:center}
 .badge{width:62px;height:62px;display:block;background-image:url('/assets/rank-tiers');background-repeat:no-repeat;background-size:738.1px 143.19px;background-position-y:-40.48px}
 .main{display:flex;flex-direction:column;gap:4px}
