@@ -91,6 +91,31 @@ public partial class HomePage : UserControl
         UpdateView();
     }
 
+    private void AddPlacement_Click(object sender, RoutedEventArgs e)
+    {
+        if (App.RankPollingService.Current is null)
+        {
+            return;
+        }
+
+        var dialog = new PlacementDialog
+        {
+            Owner = Window.GetWindow(this)
+        };
+
+        if (dialog.ShowDialog() != true)
+        {
+            return;
+        }
+
+        App.RecentMatchesService.AddManual(
+            dialog.Placement,
+            App.SettingsService.Current.RecentMatchesMode);
+
+        App.RankPollingService.RebuildOverlayState();
+        UpdateView();
+    }
+
     private void UpdateView()
     {
         var service = App.RankPollingService;
@@ -100,6 +125,7 @@ public partial class HomePage : UserControl
         var canRefresh = profile is not null && !service.IsRefreshing && cooldown <= TimeSpan.Zero;
 
         RefreshButton.IsEnabled = canRefresh;
+        AddPlacementButton.IsEnabled = snapshot is not null;
         RefreshButton.Content = service.IsRefreshing
             ? App.LocalizationService.T("불러오는 중...")
             : cooldown > TimeSpan.Zero

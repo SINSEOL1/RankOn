@@ -6,18 +6,22 @@ public sealed class RecentMatchesService
 {
     private readonly object _sync = new();
     private readonly List<RecentMatchResult> _latestMatches = new();
+    private readonly List<RecentMatchResult> _latestManualMatches = new();
     private readonly List<RecentMatchResult> _sessionMatches = new();
     private readonly HashSet<long> _knownGameIds = new();
     private bool _initialized;
+    private long _nextManualGameId = -1;
 
     public void ResetForProfile()
     {
         lock (_sync)
         {
             _latestMatches.Clear();
+            _latestManualMatches.Clear();
             _sessionMatches.Clear();
             _knownGameIds.Clear();
             _initialized = false;
+            _nextManualGameId = -1;
         }
     }
 
@@ -49,12 +53,41 @@ public sealed class RecentMatchesService
                 _sessionMatches.Add(Clone(match));
             }
 
-            if (_sessionMatches.Count > 10)
-            {
-                _sessionMatches.RemoveRange(0, _sessionMatches.Count - 10);
-            }
-
+            TrimToTen(_sessionMatches);
             _knownGameIds.UnionWith(normalized.Select(match => match.GameId));
+        }
+    }
+
+    public void AddManual(int placement, string mode)
+    {
+        if (placement is < 1 or > 8)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(placement),
+                "등수는 1~8 사이여야 합니다.");
+        }
+
+        lock (_sync)
+        {
+            var match = new RecentMatchResult
+            {
+                GameId = _nextManualGameId--,
+                Rank = placement
+            };
+
+            if (string.Equals(
+                mode,
+                "Latest10",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                _latestManualMatches.Add(match);
+                TrimToTen(_latestManualMatches);
+            }
+            else
+            {
+                _sessionMatches.Add(match);
+                TrimToTen(_sessionMatches);
+            }
         }
     }
 
@@ -71,14 +104,33 @@ public sealed class RecentMatchesService
     {
         lock (_sync)
         {
-            IEnumerable<RecentMatchResult> source = string.Equals(
+            IEnumerable<RecentMatchResult> source;
+
+            if (string.Equals(
                 mode,
                 "Latest10",
-                StringComparison.OrdinalIgnoreCase)
-                ? _latestMatches.Take(10).Reverse()
-                : _sessionMatches;
+                StringComparison.OrdinalIgnoreCase))
+            {
+                source = _latestMatches
+                    .Take(10)
+                    .Reverse()
+                    .Concat(_latestManualMatches)
+                    .TakeLast(10);
+            }
+            else
+            {
+                source = _sessionMatches;
+            }
 
             return source.Select(Clone).ToArray();
+        }
+    }
+
+    private static void TrimToTen(List<RecentMatchResult> matches)
+    {
+        if (matches.Count > 10)
+        {
+            matches.RemoveRange(0, matches.Count - 10);
         }
     }
 
