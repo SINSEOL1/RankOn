@@ -1,0 +1,77 @@
+name: Publish v1.1.6
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/release-v1.1.6-once.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Generate Windows icons
+        run: python scripts/generate-installer-icon.py
+
+      - name: Download rank tier asset
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "src\RankOn\Resources" | Out-Null
+          curl.exe -L --fail "https://support.playeternalreturn.com/hc/article_attachments/45305347324825" -o "src\RankOn\Resources\rank-tiers.png"
+          if (-not (Test-Path "src\RankOn\Resources\rank-tiers.png")) { throw "rank tier asset download failed" }
+
+      - name: Publish
+        shell: pwsh
+        run: |
+          dotnet publish src/RankOn/RankOn.csproj `
+            --configuration Release `
+            --runtime win-x64 `
+            --self-contained true `
+            -p:Version=1.1.6 `
+            -p:PublishSingleFile=true `
+            -p:IncludeNativeLibrariesForSelfExtract=true `
+            --output publish
+
+      - name: Install Inno Setup
+        run: choco install innosetup --no-progress -y
+
+      - name: Build installer
+        shell: pwsh
+        run: |
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DMyAppVersion=1.1.6" "installer\RankOn.iss"
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.1.6
+          target_commitish: ${{ github.sha }}
+          name: RankOn v1.1.6
+          make_latest: true
+          body: |
+            # RankOn v1.1.6
+
+            ## 최근 전적
+            - 홈 화면의 이번 세션에서 `전적 추가` 버튼으로 등수를 직접 추가할 수 있습니다.
+            - 1~8등 중 하나를 선택하면 최근 전적의 최신 기록으로 즉시 반영됩니다.
+            - 최근 전적은 최대 10개를 유지하며, 초과 시 가장 오래된 기록이 제거됩니다.
+            - `프로그램 시작 이후` 모드에서는 새 세션 시작 시 수동으로 추가한 기록도 함께 초기화됩니다.
+            - `최근 10게임` 모드에서도 수동 기록을 최신 기록으로 추가할 수 있습니다.
+          files: installer/output/RankOn-Setup-v1.1.6.exe
